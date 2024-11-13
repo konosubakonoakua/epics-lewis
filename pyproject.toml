@@ -44,6 +44,7 @@ doc = [
     "sphinx-autobuild",
 ]
 dev = [
+    "parameterized",
     "lewis[doc]",
     "pytest",
     "pytest-cov",
