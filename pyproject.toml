@@ -63,3 +63,6 @@ lewis-control = "lewis.scripts.control:control_simulation"
 "Homepage" = "https://github.com/ISISComputingGroup/lewis"
 "Bug Reports" = "https://github.com/ISISComputingGroup/lewis/issues"
 "Source" = "https://github.com/ISISComputingGroup/lewis"
+
+[tool.setuptools.packages.find]
+exclude=["tests", "tests.*"]
