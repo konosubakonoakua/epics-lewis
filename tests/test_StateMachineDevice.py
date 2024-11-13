@@ -19,7 +19,6 @@
 
 import itertools
 import unittest
-
 from unittest.mock import MagicMock, Mock, call, patch
 
 from lewis.devices import StateMachineDevice

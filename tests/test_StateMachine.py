@@ -18,7 +18,6 @@
 # *********************************************************************
 
 import unittest
-
 from unittest.mock import Mock, patch
 
 from lewis.core.statemachine import (

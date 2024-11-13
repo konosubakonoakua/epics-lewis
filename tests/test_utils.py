@@ -20,7 +20,6 @@
 import importlib
 import unittest
 from datetime import datetime
-
 from unittest.mock import patch
 
 from lewis.core.exceptions import LewisException, LimitViolationException

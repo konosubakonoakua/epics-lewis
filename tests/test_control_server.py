@@ -19,9 +19,9 @@
 
 import socket
 import unittest
+from unittest.mock import Mock, call, patch
 
 import zmq
-from unittest.mock import Mock, call, patch
 
 from lewis.core.control_server import (
     ControlServer,
