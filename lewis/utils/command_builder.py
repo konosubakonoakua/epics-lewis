@@ -238,7 +238,7 @@ class CmdBuilder(object):
             pattern,
             argument_mappings=self.argument_mappings,
             *args,
-            **kwargs
+            **kwargs,
         )
 
     def add_ascii_character(self, char_number):

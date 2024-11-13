@@ -19,7 +19,7 @@
 
 import unittest
 
-from mock import ANY, MagicMock, Mock, call, patch
+from unittest.mock import ANY, MagicMock, Mock, call, patch
 
 from lewis.core.simulation import Simulation
 

@@ -183,9 +183,7 @@ class StateMachine(CanProcess):
             None  # We start outside of any state, first cycle enters initial state
         )
         self._handler = {}  # Nested dict mapping [state][event] = handler
-        self._transition = (
-            {}
-        )  # Dict mapping [from_state] = [ (to_state, transition), ... ]
+        self._transition = {}  # Dict mapping [from_state] = [ (to_state, transition), ... ]
         self._prefix = {  # Default prefixes used when calling handler functions by name
             "on_entry": "_on_entry_",
             "in_state": "_in_state_",

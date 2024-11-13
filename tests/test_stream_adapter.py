@@ -1,6 +1,6 @@
 import unittest
 
-from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 from parameterized import parameterized
 
 from lewis.adapters.stream import StreamHandler

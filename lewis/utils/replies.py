@@ -60,7 +60,6 @@ def conditional_reply(property_name, reply=None):
     def decorator(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
-
             device = _get_device_from(self)
 
             try:

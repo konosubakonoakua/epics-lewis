@@ -815,6 +815,7 @@ class StreamInterface(InterfaceBase):
     In addition, the :meth:`handle_error`-method can be overridden. It is called when an exception
     is raised while handling commands.
     """
+
     protocol = "stream"
 
     in_terminator = "\r"

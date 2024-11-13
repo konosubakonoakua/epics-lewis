@@ -20,7 +20,7 @@
 import unittest
 
 import zmq
-from mock import Mock, call, patch
+from unittest.mock import Mock, call, patch
 
 from lewis.core.control_client import (
     ControlClient,

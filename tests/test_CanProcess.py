@@ -19,7 +19,7 @@
 
 import unittest
 
-from mock import call, patch
+from unittest.mock import call, patch
 
 from lewis.core.processor import CanProcess, CanProcessComposite
 

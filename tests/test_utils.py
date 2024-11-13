@@ -21,7 +21,7 @@ import importlib
 import unittest
 from datetime import datetime
 
-from mock import patch
+from unittest.mock import patch
 
 from lewis.core.exceptions import LewisException, LimitViolationException
 from lewis.core.utils import (

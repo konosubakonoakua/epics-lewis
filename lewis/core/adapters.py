@@ -267,7 +267,9 @@ class AdapterCollection:
         """
         if adapter.protocol in self._adapters:
             raise RuntimeError(
-                "Adapter for protocol '{}' is already registered.".format(adapter.protocol)
+                "Adapter for protocol '{}' is already registered.".format(
+                    adapter.protocol
+                )
             )
 
         self._adapters[adapter.protocol] = adapter
@@ -281,7 +283,9 @@ class AdapterCollection:
         """
         if protocol not in self._adapters:
             raise RuntimeError(
-                "Can not remove adapter for protocol '{}', none registered.".format(protocol)
+                "Can not remove adapter for protocol '{}', none registered.".format(
+                    protocol
+                )
             )
 
         del self._adapters[protocol]
@@ -303,9 +307,13 @@ class AdapterCollection:
 
     def _start_server(self, adapter: Adapter) -> None:
         if adapter.protocol not in self._threads:
-            self.log.info("Connecting device interface for protocol '%s'", adapter.protocol)
+            self.log.info(
+                "Connecting device interface for protocol '%s'", adapter.protocol
+            )
 
-            adapter_thread = threading.Thread(target=self._adapter_loop, args=(adapter, 0.01))
+            adapter_thread = threading.Thread(
+                target=self._adapter_loop, args=(adapter, 0.01)
+            )
             adapter_thread.daemon = True
 
             self._threads[adapter.protocol] = adapter_thread
@@ -316,10 +324,14 @@ class AdapterCollection:
             # Block until server is actually listening
             self._running[adapter.protocol].wait(2.0)
             if not self._running[adapter.protocol].is_set():
-                raise LewisException("Adapter for '%s' failed to start!" % adapter.protocol)
+                raise LewisException(
+                    "Adapter for '%s' failed to start!" % adapter.protocol
+                )
 
     def _adapter_loop(self, adapter: Adapter, dt: float) -> None:
-        adapter.device_lock = self._lock  # This ensures that the adapter is using the correct lock
+        adapter.device_lock = (
+            self._lock
+        )  # This ensures that the adapter is using the correct lock
         adapter.start_server()
 
         self._running[adapter.protocol].set()
@@ -342,7 +354,9 @@ class AdapterCollection:
 
     def _stop_server(self, adapter: Adapter) -> None:
         if adapter.protocol in self._threads:
-            self.log.info("Disconnecting device interface for protocol '%s'", adapter.protocol)
+            self.log.info(
+                "Disconnecting device interface for protocol '%s'", adapter.protocol
+            )
 
             self._running[adapter.protocol].clear()
             self._threads[adapter.protocol].join()
@@ -360,7 +374,8 @@ class AdapterCollection:
         :return: Boolean for single adapter or dict of statuses for multiple.
         """
         status_dict = {
-            adapter.protocol: adapter.is_running for adapter in self._get_adapters(list(args))
+            adapter.protocol: adapter.is_running
+            for adapter in self._get_adapters(list(args))
         }
 
         if len(args) == 1:
@@ -392,7 +407,9 @@ class AdapterCollection:
         :param args: List of protocols for which to get documentation or empty for all.
         :return: Documentation for all selected adapters.
         """
-        return "\n\n".join(adapter.documentation for adapter in self._get_adapters(list(args)))
+        return "\n\n".join(
+            adapter.documentation for adapter in self._get_adapters(list(args))
+        )
 
     def _get_adapters(self, protocols: list[str]) -> list[Adapter]:
         """
@@ -407,7 +424,9 @@ class AdapterCollection:
 
         if invalid_protocols:
             raise RuntimeError(
-                "No adapter registered for protocols: {}".format(", ".join(invalid_protocols))
+                "No adapter registered for protocols: {}".format(
+                    ", ".join(invalid_protocols)
+                )
             )
 
         return [self._adapters[proto] for proto in protocols or self.protocols]

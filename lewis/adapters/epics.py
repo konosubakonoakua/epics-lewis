@@ -220,7 +220,7 @@ class PV:
         read_only=False,
         meta_data_property=None,
         doc=None,
-        **kwargs
+        **kwargs,
     ):
         self.property = "value"
         self.read_only = read_only

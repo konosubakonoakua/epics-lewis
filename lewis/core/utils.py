@@ -89,7 +89,11 @@ def get_members(obj, predicate=None):
                       part of the resulting dict.
     :return: Dict with name-object pairs of members of obj for which predicate returns true.
     """
-    members = {member: getattr(obj, member) for member in dir(obj) if not member.startswith("__")}
+    members = {
+        member: getattr(obj, member)
+        for member in dir(obj)
+        if not member.startswith("__")
+    }
 
     if predicate is None:
         return members
@@ -249,7 +253,9 @@ class FromOptionalDependency:
             def failing_init(obj, *args, **kwargs):
                 raise self._exception
 
-            objects = tuple(type(name, (object,), {"__init__": failing_init}) for name in names)
+            objects = tuple(
+                type(name, (object,), {"__init__": failing_init}) for name in names
+            )
 
         return objects if len(objects) != 1 else objects[0]
 
@@ -347,10 +353,20 @@ class check_limits:
     def __call__(self, f):
         @functools.wraps(f)
         def limit_checked(obj, new_value):
-            lower = getattr(obj, self._lower) if isinstance(self._lower, str) else self._lower
-            upper = getattr(obj, self._upper) if isinstance(self._upper, str) else self._upper
+            lower = (
+                getattr(obj, self._lower)
+                if isinstance(self._lower, str)
+                else self._lower
+            )
+            upper = (
+                getattr(obj, self._upper)
+                if isinstance(self._upper, str)
+                else self._upper
+            )
 
-            if (lower is None or lower <= new_value) and (upper is None or new_value <= upper):
+            if (lower is None or lower <= new_value) and (
+                upper is None or new_value <= upper
+            ):
                 return f(obj, new_value)
 
             if not self._silent:

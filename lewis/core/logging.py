@@ -114,7 +114,9 @@ def has_log(target):
         log_names = [root_logger_name, logger_name]
 
         if context is not None:
-            log_names.insert(1, context if isinstance(context, str) else context.__class__.__name__)
+            log_names.insert(
+                1, context if isinstance(context, str) else context.__class__.__name__
+            )
 
         return ".".join(log_names)
 

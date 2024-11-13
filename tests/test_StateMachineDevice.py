@@ -20,7 +20,7 @@
 import itertools
 import unittest
 
-from mock import MagicMock, Mock, call, patch
+from unittest.mock import MagicMock, Mock, call, patch
 
 from lewis.devices import StateMachineDevice
 
