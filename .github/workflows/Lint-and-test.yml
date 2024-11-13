@@ -21,7 +21,8 @@ jobs:
       - name: run unit tests
         run: python -m pytest .
       - name: run system tests
-        run: python -m pytest system_tests/lewis_tests.py
+        working-directory: ./system_tests
+        run: python -m pytest --approvaltests-use-reporter='PythonNativeReporter' lewis_tests.py 
   results:
     if: ${{ always() }}
     runs-on: ubuntu-latest
