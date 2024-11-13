@@ -33,9 +33,7 @@ def julabo_simulation():
 
 
 def run_control_command(mode, command, value):
-    subprocess.check_output(
-        ["python", str(LEWIS_CONTROL_PATH), mode, command, value]
-    ).decode()
+    subprocess.check_output(["python", str(LEWIS_CONTROL_PATH), mode, command, value]).decode()
 
 
 def santise_whitespace(input_str):
@@ -58,9 +56,7 @@ class TestLewis:
         When: running Lewis without parameters
         Then: returns a list of possible simulations
         """
-        result = santise_whitespace(
-            subprocess.check_output(["python", str(LEWIS_PATH)]).decode()
-        )
+        result = santise_whitespace(subprocess.check_output(["python", str(LEWIS_PATH)]).decode())
 
         verify(result, self.reporter)
 

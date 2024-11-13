@@ -182,9 +182,7 @@ class TestFormatDocText(unittest.TestCase):
 
     def test_long_lines_are_broken(self):
         text = " ".join(["ab"] * 44)
-        expected = (
-            "    " + " ".join(["ab"] * 32) + "\n" + "    " + " ".join(["ab"] * 12)
-        )
+        expected = "    " + " ".join(["ab"] * 32) + "\n" + "    " + " ".join(["ab"] * 12)
 
         self.assertEqual(format_doc_text(text), expected)
 

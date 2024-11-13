@@ -44,9 +44,7 @@ class TestFunc(unittest.TestCase):
     def test_argument_variations_of_valid_Func_without_return_mapping_is_instance_of_Func(
         self, _, target_member, write_pattern, argument_mapping
     ):
-        self.assertIsInstance(
-            Func(target_member, write_pattern, argument_mapping), Func
-        )
+        self.assertIsInstance(Func(target_member, write_pattern, argument_mapping), Func)
 
     @parameterized.expand(
         [

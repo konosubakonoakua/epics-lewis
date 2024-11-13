@@ -85,12 +85,8 @@ class TestAdapter(unittest.TestCase):
         self.assertEqual(adapter.protocol, "foo")
 
     def test_options(self):
-        assertRaisesNothing(
-            self, DummyAdapter, "protocol", options={"bar": 2, "foo": 3}
-        )
-        self.assertRaises(
-            LewisException, DummyAdapter, "protocol", options={"invalid": False}
-        )
+        assertRaisesNothing(self, DummyAdapter, "protocol", options={"bar": 2, "foo": 3})
+        self.assertRaises(LewisException, DummyAdapter, "protocol", options={"invalid": False})
 
 
 class TestAdapterCollection(unittest.TestCase):

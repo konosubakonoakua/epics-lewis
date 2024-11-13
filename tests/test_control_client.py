@@ -72,9 +72,7 @@ class TestControlClient(unittest.TestCase):
             [
                 call(),
                 call().connect("tcp://127.0.0.1:10001"),
-                call().send_json(
-                    {"method": "foo", "params": (), "jsonrpc": "2.0", "id": "2"}
-                ),
+                call().send_json({"method": "foo", "params": (), "jsonrpc": "2.0", "id": "2"}),
                 call().recv_json(),
             ]
         )
@@ -139,27 +137,21 @@ class TestControlClient(unittest.TestCase):
 class TestObjectProxy(unittest.TestCase):
     def test_init_adds_members(self):
         mock_connection = Mock()
-        obj = type("TestType", (ObjectProxy,), {})(
-            mock_connection, ["a:get", "a:set", "setTest"]
-        )
+        obj = type("TestType", (ObjectProxy,), {})(mock_connection, ["a:get", "a:set", "setTest"])
         self.assertTrue(hasattr(type(obj), "a"))
         self.assertTrue(hasattr(obj, "setTest"))
 
         mock_connection.assert_not_called()
 
     def test_member_access_calls_make_request(self):
-        obj = type("TestType", (ObjectProxy,), {})(
-            Mock(), ["a:get", "a:set", "setTest"]
-        )
+        obj = type("TestType", (ObjectProxy,), {})(Mock(), ["a:get", "a:set", "setTest"])
 
         with patch.object(obj, "_make_request") as request_mock:
             obj.a
             obj.a = 4
             obj.setTest()
 
-        request_mock.assert_has_calls(
-            [call("a:get"), call("a:set", 4), call("setTest")]
-        )
+        request_mock.assert_has_calls([call("a:get"), call("a:set", 4), call("setTest")])
 
     def test_response_without_id_raises_exception(self):
         mock_connection = Mock(ControlClient)
@@ -189,9 +181,7 @@ class TestObjectProxy(unittest.TestCase):
         mock_connection = Mock(ControlClient)
         mock_connection.json_rpc.return_value = (
             {
-                "error": {
-                    "data": {"type": "AttributeError", "message": "Some message"}
-                },
+                "error": {"data": {"type": "AttributeError", "message": "Some message"}},
                 "id": 2,
             },
             2,
@@ -206,9 +196,7 @@ class TestObjectProxy(unittest.TestCase):
         mock_connection = Mock(ControlClient)
         mock_connection.json_rpc.return_value = (
             {
-                "error": {
-                    "data": {"type": "NonExistingException", "message": "Some message"}
-                },
+                "error": {"data": {"type": "NonExistingException", "message": "Some message"}},
                 "id": 2,
             },
             2,

@@ -36,9 +36,7 @@ class TestCanProcess(unittest.TestCase):
     def test_process_calls_doBeforeProcess_only_if_doProcess_is_present(self):
         processor = CanProcess()
 
-        with patch.object(
-            processor, "doBeforeProcess", create=True
-        ) as doBeforeProcessMock:
+        with patch.object(processor, "doBeforeProcess", create=True) as doBeforeProcessMock:
             processor.process(1.0)
 
             doBeforeProcessMock.assert_not_called()
@@ -74,9 +72,7 @@ class TestCanProcessComposite(unittest.TestCase):
     def test_process_calls_doBeforeProcess_if_present(self):
         composite = CanProcessComposite()
 
-        with patch.object(
-            composite, "doBeforeProcess", create=True
-        ) as doBeforeProcessMock:
+        with patch.object(composite, "doBeforeProcess", create=True) as doBeforeProcessMock:
             composite.process(3.0)
 
         doBeforeProcessMock.assert_called_once_with(3.0)

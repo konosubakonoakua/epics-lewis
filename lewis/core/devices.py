@@ -155,9 +155,11 @@ class DeviceBuilder:
             broken=dict(
                 device_type=SimulatedDeviceType,
                 parameters=dict(
-                    override_initial_state='error',
-                    override_initial_data=dict(
-                        target=-10, position=-20.0))))
+                    override_initial_state="error",
+                    override_initial_data=dict(target=-10, position=-20.0),
+                ),
+            )
+        )
 
     The other location is a sub-package called `setups`, which should in turn contain modules. Each
     module must contain a variable ``device_type`` and a variable ``parameters`` which are
@@ -193,9 +195,7 @@ class DeviceBuilder:
             self._module.__name__,
             ", ".join(device_t.__name__ for device_t in self._device_types),
             ", ".join(self._setups.keys()),
-            ", ".join(
-                "(%s: %s)" % (k, v.__name__) for k, v in self._interfaces.items()
-            ),
+            ", ".join("(%s: %s)" % (k, v.__name__) for k, v in self._interfaces.items()),
         )
 
     def _discover_devices(self, devices_package):
@@ -226,9 +226,7 @@ class DeviceBuilder:
                     )
 
                 all_setups[name] = {
-                    "device_type": getattr(
-                        setup_module, "device_type", self.default_device_type
-                    ),
+                    "device_type": getattr(setup_module, "device_type", self.default_device_type),
                     "parameters": getattr(setup_module, "parameters", {}),
                 }
 
@@ -242,9 +240,7 @@ class DeviceBuilder:
 
         if interface_package is not None:
             for interface_module in get_submodules(interface_package).values():
-                all_interfaces += list(
-                    get_members(interface_module, is_interface).values()
-                )
+                all_interfaces += list(get_members(interface_module, is_interface).values())
 
         all_interfaces += list(get_members(self._module, is_interface).values())
 
@@ -369,9 +365,7 @@ class DeviceBuilder:
         )
 
         try:
-            return self._create_device_instance(
-                device_type, **setup_data.get("parameters", {})
-            )
+            return self._create_device_instance(device_type, **setup_data.get("parameters", {}))
         except RuntimeError:
             raise LewisException(
                 "The setup '{}' you tried to load does not specify a valid device type, but the "
@@ -419,8 +413,8 @@ class DeviceRegistry:
 
         from lewis.core.devices import DeviceRegistry
 
-        registry = DeviceRegistry('lewis.devices')
-        chopper_builder = registry.device_builder('chopper')
+        registry = DeviceRegistry("lewis.devices")
+        chopper_builder = registry.device_builder("chopper")
 
         # construct device, interface, ...
 

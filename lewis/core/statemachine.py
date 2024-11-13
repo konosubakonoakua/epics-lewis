@@ -179,9 +179,7 @@ class StateMachine(CanProcess):
 
         self._set_logging_context(context)
 
-        self._state = (
-            None  # We start outside of any state, first cycle enters initial state
-        )
+        self._state = None  # We start outside of any state, first cycle enters initial state
         self._handler = {}  # Nested dict mapping [state][event] = handler
         self._transition = {}  # Dict mapping [from_state] = [ (to_state, transition), ... ]
         self._prefix = {  # Default prefixes used when calling handler functions by name
@@ -193,8 +191,7 @@ class StateMachine(CanProcess):
         # Specifying an initial state is not optional
         if "initial" not in cfg:
             raise StateMachineException(
-                "StateMachine configuration must include "
-                "'initial' to specify starting state."
+                "StateMachine configuration must include " "'initial' to specify starting state."
             )
         self._initial = cfg["initial"]
         self._set_handlers(self._initial)
@@ -359,9 +356,7 @@ class StateMachine(CanProcess):
         # General transition
         for target_state, check_func in self._transition.get(self._state, []):
             if check_func():
-                self.log.debug(
-                    "Transition triggered (%s -> %s)", self._state, target_state
-                )
+                self.log.debug("Transition triggered (%s -> %s)", self._state, target_state)
                 self._raise_event("on_exit", dt)
                 self._state = target_state
                 self._raise_event("on_entry", dt)

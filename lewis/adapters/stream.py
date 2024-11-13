@@ -59,9 +59,7 @@ class StreamHandler(asynchat.async_chat):
                 self._readtimer = 0
                 request = self._get_request()
                 with self._stream_server.device_lock:
-                    error = RuntimeError(
-                        "ReadTimeout while waiting for command terminator."
-                    )
+                    error = RuntimeError("ReadTimeout while waiting for command terminator.")
                     reply = self._handle_error(request, error)
                 self._send_reply(reply)
 
@@ -108,11 +106,7 @@ class StreamHandler(asynchat.async_chat):
         with self._stream_server.device_lock:
             try:
                 cmd = next(
-                    (
-                        cmd
-                        for cmd in self._target.bound_commands
-                        if cmd.can_process(request)
-                    ),
+                    (cmd for cmd in self._target.bound_commands if cmd.can_process(request)),
                     None,
                 )
 
@@ -266,8 +260,8 @@ class scanf(regex):
 
     .. sourcecode:: Python
 
-        exact = scanf('T=%f')
-        not_exact = scanf('T=%f', exact_match=False)
+        exact = scanf("T=%f")
+        not_exact = scanf("T=%f", exact_match=False)
 
     The first pattern only matches the string ``T=4.0``, whereas the second would also match
     ``T=4.0garbage``. Please note that the specifiers like ``%f`` are automatically turned into
@@ -346,13 +340,9 @@ class Func:
     .. _re: https://docs.python.org/2/library/re.html#regular-expression-syntax
     """
 
-    def __init__(
-        self, func, pattern, argument_mappings=None, return_mapping=None, doc=None
-    ):
+    def __init__(self, func, pattern, argument_mappings=None, return_mapping=None, doc=None):
         if not callable(func):
-            raise RuntimeError(
-                "Can not construct a Func-object from a non callable object."
-            )
+            raise RuntimeError("Can not construct a Func-object from a non callable object.")
 
         self.func = func
 
@@ -384,9 +374,7 @@ class Func:
                 )
             )
 
-        if argument_mappings is not None and (
-            self.matcher.arg_count != len(argument_mappings)
-        ):
+        if argument_mappings is not None and (self.matcher.arg_count != len(argument_mappings)):
             raise RuntimeError(
                 "Supplied argument mappings for function matched by pattern '{}' specify {} "
                 "argument(s), but the function has {} arguments.".format(
@@ -481,9 +469,7 @@ class CommandBase:
     :param doc: Description of the command. If not supplied, the docstring is used.
     """
 
-    def __init__(
-        self, func, pattern, argument_mappings=None, return_mapping=None, doc=None
-    ):
+    def __init__(self, func, pattern, argument_mappings=None, return_mapping=None, doc=None):
         super(CommandBase, self).__init__()
 
         self.func = func
@@ -618,9 +604,7 @@ class Var(CommandBase):
         return_mapping=lambda x: None if x is None else str(x),
         doc=None,
     ):
-        super(Var, self).__init__(
-            target_member, None, argument_mappings, return_mapping, doc
-        )
+        super(Var, self).__init__(target_member, None, argument_mappings, return_mapping, doc)
 
         self.target = None
 
@@ -702,9 +686,7 @@ class StreamAdapter(Adapter):
                 cmd.matcher.pattern,
                 format_doc_text(cmd.doc or inspect.getdoc(cmd.func) or ""),
             )
-            for cmd in sorted(
-                self.interface.bound_commands, key=lambda x: x.matcher.pattern
-            )
+            for cmd in sorted(self.interface.bound_commands, key=lambda x: x.matcher.pattern)
         ]
 
         options = format_doc_text(
@@ -855,8 +837,9 @@ class StreamInterface(InterfaceBase):
                 pattern = bound_cmd.matcher.pattern
                 if pattern in patterns:
                     raise RuntimeError(
-                        "The regular expression {} is "
-                        "associated with multiple commands.".format(pattern)
+                        "The regular expression {} is " "associated with multiple commands.".format(
+                            pattern
+                        )
                     )
 
                 patterns.add(pattern)

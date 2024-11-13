@@ -51,9 +51,7 @@ class RemoteException(Exception):
 
     def __init__(self, exception_type, message):
         super(RemoteException, self).__init__(
-            "Exception on server side of type '{}': '{}'".format(
-                exception_type, message
-            )
+            "Exception on server side of type '{}': '{}'".format(exception_type, message)
         )
 
         self.server_side_type = exception_type
@@ -168,7 +166,7 @@ class ObjectProxy:
 
     .. sourcecode:: Python
 
-        proxy = type('SomeClassName', (ObjectProxy, ), {})(connection, methods, prefix)
+        proxy = type("SomeClassName", (ObjectProxy,), {})(connection, methods, prefix)
 
     There is however, the class ControlClient, which automates all that
     and provides objects that are ready to use.
@@ -242,9 +240,7 @@ class ObjectProxy:
             setattr(
                 type(self),
                 prop,
-                property(
-                    self._create_getter_proxy(prop), self._create_setter_proxy(prop)
-                ),
+                property(self._create_getter_proxy(prop), self._create_setter_proxy(prop)),
             )
 
     def _create_getter_proxy(self, property_name):

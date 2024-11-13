@@ -308,7 +308,5 @@ class CmdBuilder(object):
         :param command_separator: Character(s) that separate commands
         :return: builder
         """
-        self.arg("[^" + re.escape(command_separator) + "]*").escape(
-            command_separator
-        ).arg(".*")
+        self.arg("[^" + re.escape(command_separator) + "]*").escape(command_separator).arg(".*")
         return self

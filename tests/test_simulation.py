@@ -149,13 +149,9 @@ class TestSimulation(unittest.TestCase):
 
     @patch("lewis.core.simulation.ExposedObject")
     @patch("lewis.core.simulation.ControlServer")
-    def test_construct_control_server(
-        self, mock_control_server_type, exposed_object_mock
-    ):
+    def test_construct_control_server(self, mock_control_server_type, exposed_object_mock):
         exposed_object_mock.return_value = "test"
-        assertRaisesNothing(
-            self, Simulation, device=Mock(), control_server="localhost:10000"
-        )
+        assertRaisesNothing(self, Simulation, device=Mock(), control_server="localhost:10000")
 
         mock_control_server_type.assert_called_once_with(
             {"device": "test", "simulation": "test", "interface": "test"},
@@ -207,9 +203,7 @@ class TestSimulation(unittest.TestCase):
     def test_start_stop(self):
         env = Simulation(device=Mock())
 
-        with patch.object(
-            env, "_process_cycle", side_effect=lambda x: env.stop()
-        ) as mock_cycle:
+        with patch.object(env, "_process_cycle", side_effect=lambda x: env.stop()) as mock_cycle:
             env.start()
 
             mock_cycle.assert_has_calls([call(0.0)])
@@ -249,9 +243,7 @@ class TestSimulation(unittest.TestCase):
         control_server_mock.return_value.assert_has_calls([call.start_server()])
 
         # Can not replace control server when simulation is running
-        self.assertRaises(
-            RuntimeError, setattr, env, "control_server", "127.0.0.1:10003"
-        )
+        self.assertRaises(RuntimeError, setattr, env, "control_server", "127.0.0.1:10003")
 
     def test_set_parameters(self):
         class TestDevice:
@@ -297,9 +289,7 @@ class TestSimulation(unittest.TestCase):
                 raise RuntimeError("Error")
 
         adapter_mock = MagicMock()
-        sim = Simulation(
-            device=Mock(), adapters=adapter_mock, device_builder=MockBuilder()
-        )
+        sim = Simulation(device=Mock(), adapters=adapter_mock, device_builder=MockBuilder())
 
         sim.switch_setup("foo")
 

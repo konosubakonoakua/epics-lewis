@@ -71,9 +71,7 @@ class ModbusDataBank:
         data = self._data[addr : addr + count]
         if len(data) != count:
             addr += self._start_addr
-            raise IndexError(
-                "Invalid address range [{:#06x} - {:#06x}]".format(addr, addr + count)
-            )
+            raise IndexError("Invalid address range [{:#06x} - {:#06x}]".format(addr, addr + count))
         return data
 
     def set(self, addr, values):
@@ -89,9 +87,7 @@ class ModbusDataBank:
         if not 0 <= addr <= end <= len(self._data):
             addr += self._start_addr
             raise IndexError(
-                "Invalid address range [{:#06x} - {:#06x}]".format(
-                    addr, addr + len(values)
-                )
+                "Invalid address range [{:#06x} - {:#06x}]".format(addr, addr + len(values))
             )
         self._data[addr:end] = values
 
@@ -346,9 +342,7 @@ class ModbusProtocol:
 
     def _illegal_function_exception(self, request):
         """Log and return an illegal function code exception"""
-        self.log.error(
-            "Unsupported Function Code: {0} ({0:#04x})".format(request.fcode)
-        )
+        self.log.error("Unsupported Function Code: {0} ({0:#04x})".format(request.fcode))
         return request.create_exception(MBEX.ILLEGAL_FUNCTION)
 
     def _handle_read_coils(self, request):
@@ -538,9 +532,7 @@ class ModbusProtocol:
 class ModbusHandler(asyncore.dispatcher_with_send):
     def __init__(self, sock, interface, server):
         asyncore.dispatcher_with_send.__init__(self, sock=sock)
-        self._datastore = ModbusDataStore(
-            interface.di, interface.co, interface.ir, interface.hr
-        )
+        self._datastore = ModbusDataStore(interface.di, interface.co, interface.ir, interface.hr)
         self._modbus = ModbusProtocol(self.send, self._datastore)
         self._server = server
 

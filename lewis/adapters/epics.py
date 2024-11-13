@@ -42,13 +42,13 @@ missing_pcaspy_exception = LewisException(
     "Please refer to the documentation for advice."
 )
 
-Driver, SimpleServer = FromOptionalDependency(
-    "pcaspy", missing_pcaspy_exception
-).do_import("Driver", "SimpleServer")
+Driver, SimpleServer = FromOptionalDependency("pcaspy", missing_pcaspy_exception).do_import(
+    "Driver", "SimpleServer"
+)
 
-pcaspy_manager = FromOptionalDependency(
-    "pcaspy.driver", missing_pcaspy_exception
-).do_import("manager")
+pcaspy_manager = FromOptionalDependency("pcaspy.driver", missing_pcaspy_exception).do_import(
+    "manager"
+)
 
 
 class BoundPV:
@@ -149,15 +149,13 @@ class PV:
     .. sourcecode:: Python
 
         class Interface(EpicsInterface):
-            pvs = {
-                'example': PV('example', meta_data_property='example_meta')
-            }
+            pvs = {"example": PV("example", meta_data_property="example_meta")}
 
             @property
             def example_meta(self):
                 return {
-                    'lolim': self.device._example_low_limit,
-                    'hilim': self.device._example_high_limit,
+                    "lolim": self.device._example_low_limit,
+                    "hilim": self.device._example_high_limit,
                 }
 
     The PV infos are then updated together with the value, determined by ``poll_interval``.
@@ -171,10 +169,9 @@ class PV:
             def get_example(self):
                 return 42
 
+
         class Interface(EpicsInterface):
-            pvs = {
-                'example': PV('get_example')
-            }
+            pvs = {"example": PV("get_example")}
 
     It is also possible to model a getter/setter pair, in this case a tuple has to be provided:
 
@@ -189,10 +186,9 @@ class PV:
             def set_example(self, new_example):
                 self._ex = new_example - 2
 
+
         class Interface(EpicsInterface):
-            pvs = {
-                'example': PV(('get_example', 'set_example'))
-            }
+            pvs = {"example": PV(("get_example", "set_example"))}
 
     Any of the two members in the tuple can be substituted with ``None`` in case it does not apply.
     Besides method names it is also allowed to provide callables. Valid callables are for example
@@ -303,11 +299,7 @@ class PV:
             # set to True at this point automatically.
             target_prop = getattr(type(target), raw_getter, None)
 
-            if (
-                prop == "value"
-                and isinstance(target_prop, property)
-                and target_prop.fset is None
-            ):
+            if prop == "value" and isinstance(target_prop, property) and target_prop.fset is None:
                 self.read_only = True
 
             # Now the target does not need to be constructed, property or meta_data_property
@@ -349,9 +341,7 @@ class PV:
             raise RuntimeError(
                 "The function '{}' does not look like a getter function. A valid getter "
                 "function has no arguments that do not have a default. The self-argument of "
-                "methods does not count towards that number.".format(
-                    final_callable.__name__
-                )
+                "methods does not count towards that number.".format(final_callable.__name__)
             )
 
         @wraps(final_callable)
@@ -399,9 +389,7 @@ class PV:
         """
         if not callable(func):
             func_name = func
-            func = next(
-                (getattr(obj, func, None) for obj in targets if func in dir(obj)), None
-            )
+            func = next((getattr(obj, func, None) for obj in targets if func in dir(obj)), None)
 
             if not func:
                 raise AttributeError(
@@ -460,8 +448,7 @@ class PropertyExposingDriver(Driver):
             )
         except AccessViolationException:
             self.log.warning(
-                "Rejected writing value %s to PV %s due to access "
-                "violation, PV is read-only.",
+                "Rejected writing value %s to PV %s due to access " "violation, PV is read-only.",
                 value,
                 pv,
             )
@@ -515,9 +502,7 @@ class PropertyExposingDriver(Driver):
                             meta_updates.append((pv, pv_meta))
 
                     except (AttributeError, TypeError):
-                        self.log.exception(
-                            "An error occurred while updating PV %s.", pv
-                        )
+                        self.log.exception("An error occurred while updating PV %s.", pv)
                     finally:
                         self._timers[pv] = 0.0
 
@@ -557,9 +542,7 @@ class EpicsAdapter(Adapter):
 
     .. sourcecode:: Python
 
-        options = {
-            'prefix': 'PVPREFIX:'
-        }
+        options = {"prefix": "PVPREFIX:"}
 
     :param options: Dictionary with options.
     """
@@ -611,12 +594,7 @@ class EpicsAdapter(Adapter):
 
             self.log.info(
                 "Started serving PVs: %s",
-                ", ".join(
-                    (
-                        self._options.prefix + pv
-                        for pv in self.interface.bound_pvs.keys()
-                    )
-                ),
+                ", ".join((self._options.prefix + pv for pv in self.interface.bound_pvs.keys())),
             )
 
     def stop_server(self):
@@ -655,10 +633,7 @@ class EpicsInterface(InterfaceBase):
     .. sourcecode:: Python
 
         class SimpleDeviceEpicsInterface(EpicsInterface):
-            pvs = {
-                'VELO': PV('speed', read_only=True),
-                'POS': PV('position', lolo=0, hihi=100)
-            }
+            pvs = {"VELO": PV("speed", read_only=True), "POS": PV("position", lolo=0, hihi=100)}
 
     For more complex behavior, the interface could contain properties that do not
     exist in the device itself. If the device should also have a PV called STOP
@@ -668,9 +643,9 @@ class EpicsInterface(InterfaceBase):
 
         class SimpleDeviceEpicsInterface(EpicsInterface):
             pvs = {
-                'VELO': PV('speed', read_only=True),
-                'POS': PV('position', lolo=0, hihi=100),
-                'STOP': PV('stop', type='int'),
+                "VELO": PV("speed", read_only=True),
+                "POS": PV("position", lolo=0, hihi=100),
+                "STOP": PV("stop", type="int"),
             }
 
             @property

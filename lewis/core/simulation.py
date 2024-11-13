@@ -102,9 +102,7 @@ class Simulation:
 
         # Constructing the control server must be deferred until the end,
         # because the construction is not complete at this point
-        self._control_server = (
-            None  # Just initialize to None and use property setter afterwards
-        )
+        self._control_server = None  # Just initialize to None and use property setter afterwards
         self._control_server_thread = None
         self.control_server = control_server
 
@@ -154,11 +152,7 @@ class Simulation:
         A list of setups that are available. Use :meth:`switch_setup` to
         change the setup.
         """
-        return (
-            list(self._device_builder.setups.keys())
-            if self._device_builder is not None
-            else []
-        )
+        return list(self._device_builder.setups.keys()) if self._device_builder is not None else []
 
     def switch_setup(self, new_setup):
         """
@@ -216,9 +210,7 @@ class Simulation:
                 while not self._stop_commanded:
                     self._control_server.process(blocking=True)
 
-                self.log.info(
-                    "Stopped processing control server commands, ending thread."
-                )
+                self.log.info("Stopped processing control server commands, ending thread.")
 
             self._control_server_thread = Thread(target=control_server_loop)
             self._control_server_thread.start()
@@ -416,9 +408,7 @@ class Simulation:
     @control_server.setter
     def control_server(self, control_server):
         if self.is_started and self._control_server:
-            raise RuntimeError(
-                "Can not replace control server while simulation is running."
-            )
+            raise RuntimeError("Can not replace control server while simulation is running.")
 
         self._control_server = self._create_control_server(control_server)
 
@@ -434,13 +424,13 @@ class SimulationFactory:
 
     .. sourcecode:: Python
 
-        factory = SimulationFactory('lewis.devices')
+        factory = SimulationFactory("lewis.devices")
 
     The actual creation happens via the :meth:`create`-method:
 
     .. sourcecode:: Python
 
-        simulation = factory.create('device_name', protocol='protocol')
+        simulation = factory.create("device_name", protocol="protocol")
 
     The simulation can then be started and stopped as desired.
 

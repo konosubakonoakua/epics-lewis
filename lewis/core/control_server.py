@@ -77,9 +77,7 @@ class ExposedObject:
     :param lock: ``threading.Lock`` that is used when accessing ``obj``.
     """
 
-    def __init__(
-        self, obj, members=None, exclude=None, exclude_inherited=False, lock=None
-    ):
+    def __init__(self, obj, members=None, exclude=None, exclude_inherited=False, lock=None):
         super(ExposedObject, self).__init__()
 
         self._object = obj
@@ -112,9 +110,7 @@ class ExposedObject:
 
         :param member: The member of the wrapped object to expose
         """
-        method_object = getattr(type(self._object), member, None) or getattr(
-            self._object, member
-        )
+        method_object = getattr(type(self._object), member, None) or getattr(self._object, member)
 
         if callable(method_object):
             self._add_function(member, getattr(self._object, member))
@@ -147,9 +143,7 @@ class ExposedObject:
 
     def _add_property(self, name):
         self._add_function("{}:get".format(name), lambda: getattr(self._object, name))
-        self._add_function(
-            "{}:set".format(name), lambda value: setattr(self._object, name, value)
-        )
+        self._add_function("{}:set".format(name), lambda value: setattr(self._object, name, value))
 
     def _add_function(self, name, function):
         if not callable(function):
@@ -185,7 +179,7 @@ class ExposedObjectCollection(ExposedObject):
 
     .. sourcecode:: Python
 
-        name:api
+        name: api
 
     A list of exposed objects can be obtained by calling the following method from the client:
 
@@ -277,17 +271,13 @@ class ControlServer:
         except ValueError:
             raise LewisException(
                 "'{}' is not a valid control server initialization string. "
-                'A string of the form "host:port" is expected.'.format(
-                    connection_string
-                )
+                'A string of the form "host:port" is expected.'.format(connection_string)
             )
 
         try:
             self.host = socket.gethostbyname(host)
         except socket.gaierror:
-            raise LewisException(
-                "Could not resolve control server host: {}".format(host)
-            )
+            raise LewisException("Could not resolve control server host: {}".format(host))
 
         self.port = port
 
@@ -357,14 +347,10 @@ class ControlServer:
                          is triggered. Default is False to preserve behavior of prior versions.
         """
         if self._socket is None:
-            raise RuntimeError(
-                "The server has not been started yet, use start_server to do so."
-            )
+            raise RuntimeError("The server has not been started yet, use start_server to do so.")
 
         try:
-            request = self._socket.recv_unicode(
-                flags=zmq.NOBLOCK if not blocking else 0
-            )
+            request = self._socket.recv_unicode(flags=zmq.NOBLOCK if not blocking else 0)
 
             self.log.debug("Got request %s", request)
 

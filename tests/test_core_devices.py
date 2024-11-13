@@ -112,9 +112,7 @@ class TestDeviceBuilderSimpleModule(unittest.TestCase):
         builder = DeviceBuilder(self.module)
 
         self.assertIsInstance(builder.create_interface(), self.module.DummyAdapter)
-        self.assertIsInstance(
-            builder.create_interface("dummy"), self.module.DummyAdapter
-        )
+        self.assertIsInstance(builder.create_interface("dummy"), self.module.DummyAdapter)
 
         self.assertRaises(LewisException, builder.create_interface, "invalid_protocol")
 
@@ -216,9 +214,7 @@ class TestDeviceBuilderComplexModule(unittest.TestCase):
 
         self.assertIsInstance(builder.create_device(), self.module.DummyDevice)
         self.assertIsInstance(builder.create_device("default"), self.module.DummyDevice)
-        self.assertIsInstance(
-            builder.create_device("other"), self.module.OtherDummyDevice
-        )
+        self.assertIsInstance(builder.create_device("other"), self.module.OtherDummyDevice)
 
 
 class TestDeviceBuilderWithDuplicateProtocols(unittest.TestCase):
