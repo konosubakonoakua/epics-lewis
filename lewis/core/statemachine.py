@@ -48,11 +48,11 @@ class HasContext:
     StateMachine was provided with a context itself).
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(HasContext, self).__init__()
         self._context = None
 
-    def set_context(self, new_context):
+    def set_context(self, new_context) -> None:
         """Assigns the new context to the member variable ``_context``."""
         self._context = new_context
 
@@ -73,10 +73,10 @@ class State(HasContext):
     custom behaviour. Device context is provided via :class:`HasContext` mixin.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(State, self).__init__()
 
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         """
         Handle entry event. Raised once, when this state is entered.
 
@@ -84,7 +84,7 @@ class State(HasContext):
         """
         pass
 
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         """
         Handle in-state event.
 
@@ -96,7 +96,7 @@ class State(HasContext):
         """
         pass
 
-    def on_exit(self, dt):
+    def on_exit(self, dt) -> None:
         """
         Handle exit event. Raised once, when this state is exited.
 
@@ -117,7 +117,7 @@ class Transition(HasContext):
     To use this class, create a derived class and override the :meth:`__call__` attribute.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(Transition, self).__init__()
 
     def __call__(self):
@@ -174,7 +174,7 @@ class StateMachine(CanProcess):
     .. seealso:: See :meth:`~StateMachine.doProcess` for details.
     """
 
-    def __init__(self, cfg, context=None):
+    def __init__(self, cfg, context=None) -> None:
         super(StateMachine, self).__init__()
 
         self._set_logging_context(context)
@@ -199,7 +199,7 @@ class StateMachine(CanProcess):
         self._setup_state_handlers(cfg.get("states", {}), context)
         self._setup_transition_handlers(cfg.get("transitions", {}), context)
 
-    def _setup_state_handlers(self, state_handler_configuration, context):
+    def _setup_state_handlers(self, state_handler_configuration, context) -> None:
         """
         This method constructs the state handlers from a user-provided dict.
 
@@ -232,7 +232,7 @@ class StateMachine(CanProcess):
                     "Must be dict or iterable." % state_name
                 )
 
-    def _setup_transition_handlers(self, transition_handler_configuration, context):
+    def _setup_transition_handlers(self, transition_handler_configuration, context) -> None:
         """
         This method constructs the transition handlers from a user-provided
         dict.
@@ -274,7 +274,7 @@ class StateMachine(CanProcess):
 
         return state in (transition[0] for transition in self._transition[self._state])
 
-    def bind_handlers_by_name(self, instance, override=False, prefix=None):
+    def bind_handlers_by_name(self, instance, override=False, prefix=None) -> None:
         """
         Auto-bind state handlers based on naming convention.
 
@@ -322,7 +322,7 @@ class StateMachine(CanProcess):
                     if callable(named_handler):
                         self._handler[state][event] = named_handler
 
-    def doProcess(self, dt):
+    def doProcess(self, dt) -> None:
         """
         Process a cycle of this state machine.
 
@@ -365,14 +365,14 @@ class StateMachine(CanProcess):
         # Always end with an in_state
         self._raise_event("in_state", dt)
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Reset the state machine to before the first cycle. The next process() will
         enter the initial state.
         """
         self._state = None
 
-    def _set_handlers(self, state, *args, **kwargs):
+    def _set_handlers(self, state, *args, **kwargs) -> None:
         """
         Add or update state handlers.
 
@@ -398,7 +398,7 @@ class StateMachine(CanProcess):
             "on_exit": on_exit,
         }
 
-    def _set_transition(self, from_state, to_state, transition_check):
+    def _set_transition(self, from_state, to_state, transition_check) -> None:
         """
         Add or update a transition and its condition function.
 
@@ -433,7 +433,7 @@ class StateMachine(CanProcess):
             )
         )
 
-    def _raise_event(self, event, dt):
+    def _raise_event(self, event, dt) -> None:
         """
         Invoke the given event name for the current state, passing dt as a parameter.
 

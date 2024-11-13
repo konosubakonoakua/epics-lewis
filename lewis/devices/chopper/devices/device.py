@@ -28,7 +28,7 @@ from .bearings import MagneticBearings
 
 
 class SimulatedBearings(CanProcess, MagneticBearings):
-    def __init__(self):
+    def __init__(self) -> None:
         super(SimulatedBearings, self).__init__()
 
         self._csm = StateMachine(
@@ -45,25 +45,25 @@ class SimulatedBearings(CanProcess, MagneticBearings):
 
         self._levitate = False
 
-    def engage(self):
+    def engage(self) -> None:
         self.levitate()
 
-    def disengage(self):
+    def disengage(self) -> None:
         self.delevitate()
 
-    def levitate(self):
+    def levitate(self) -> None:
         self._levitate = True
 
-    def delevitate(self):
+    def delevitate(self) -> None:
         self._levitate = False
 
-    def levitationComplete(self):
+    def levitationComplete(self) -> bool:
         return True
 
-    def delevitationComplete(self):
+    def delevitationComplete(self) -> bool:
         return True
 
-    def doProcess(self, dt):
+    def doProcess(self, dt) -> None:
         self._csm.process(dt)
 
     @property
@@ -78,7 +78,7 @@ class SimulatedBearings(CanProcess, MagneticBearings):
 class SimulatedChopper(StateMachineDevice):
     _bearings = None
 
-    def _initialize_data(self):
+    def _initialize_data(self) -> None:
         self.speed = 0.0
         self.target_speed = 0.0
 
@@ -114,7 +114,7 @@ class SimulatedChopper(StateMachineDevice):
             "parked": states.DefaultParkedState(),
         }
 
-    def _get_initial_state(self):
+    def _get_initial_state(self) -> str:
         return "init"
 
     def _get_transition_handlers(self):
@@ -169,17 +169,17 @@ class SimulatedChopper(StateMachineDevice):
     def initialized(self):
         return self._initialized
 
-    def initialize(self):
+    def initialize(self) -> None:
         if self._csm.can("bearings") and not self.initialized:
             self._initialized = True
             self._bearings.engage()
 
-    def deinitialize(self):
+    def deinitialize(self) -> None:
         if self._csm.can("bearings") and self.initialized:
             self._shutdown_commanded = True
             self._bearings.disengage()
 
-    def park(self):
+    def park(self) -> None:
         if self._csm.can("parking"):
             self._park_commanded = True
 
@@ -187,7 +187,7 @@ class SimulatedChopper(StateMachineDevice):
     def parked(self):
         return self._csm.state == "parked"
 
-    def stop(self):
+    def stop(self) -> None:
         if self._csm.can("stopping"):
             self._stop_commanded = True
 
@@ -195,7 +195,7 @@ class SimulatedChopper(StateMachineDevice):
     def stopped(self):
         return self._csm.state == "stopped"
 
-    def start(self):
+    def start(self) -> None:
         if self._csm.can("accelerating") and self.target_speed > 0.0:
             self._start_commanded = True
         else:
@@ -205,7 +205,7 @@ class SimulatedChopper(StateMachineDevice):
     def started(self):
         return self._csm.state == "accelerating"
 
-    def unlock(self):
+    def unlock(self) -> None:
         if self._csm.can("idle"):
             self._idle_commanded = True
 
@@ -213,7 +213,7 @@ class SimulatedChopper(StateMachineDevice):
     def idle(self):
         return self._csm.state == "idle"
 
-    def lock_phase(self):
+    def lock_phase(self) -> None:
         if self._csm.can("phase_locking"):
             self._phase_commanded = True
 

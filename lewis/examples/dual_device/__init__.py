@@ -34,7 +34,7 @@ class VerySimpleDevice(Device):
         """The parameter multiplied by 2."""
         return self.param * 2
 
-    def set_param(self, new_param):
+    def set_param(self, new_param) -> None:
         self.param = int(new_param / 2)
 
     @property
@@ -44,7 +44,7 @@ class VerySimpleDevice(Device):
 
     @second.setter
     @check_limits("lower_limit", "upper_limit")
-    def second(self, new_second):
+    def second(self, new_second) -> None:
         self._second = new_second
 
 

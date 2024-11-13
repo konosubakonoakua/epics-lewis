@@ -54,7 +54,7 @@ class ModbusDataBank:
     :param kwargs: Configuration
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         self._data = kwargs["data"]
         self._start_addr = kwargs["start_addr"]
 
@@ -74,7 +74,7 @@ class ModbusDataBank:
             raise IndexError("Invalid address range [{:#06x} - {:#06x}]".format(addr, addr + count))
         return data
 
-    def set(self, addr, values):
+    def set(self, addr, values) -> None:
         """
         Write list ``values`` to ``addr`` memory location in DataBank.
 
@@ -109,7 +109,7 @@ class ModbusBasicDataBank(ModbusDataBank):
     :param last_addr: Last valid address
     """
 
-    def __init__(self, default_value=0, start_addr=0x0000, last_addr=0xFFFF):
+    def __init__(self, default_value=0, start_addr=0x0000, last_addr=0xFFFF) -> None:
         super(ModbusBasicDataBank, self).__init__(
             start_addr=start_addr, data=[default_value] * (last_addr - start_addr + 1)
         )
@@ -118,7 +118,7 @@ class ModbusBasicDataBank(ModbusDataBank):
 class ModbusDataStore:
     """Convenience struct to hold the four types of DataBanks in Modbus"""
 
-    def __init__(self, di=None, co=None, ir=None, hr=None):
+    def __init__(self, di=None, co=None, ir=None, hr=None) -> None:
         self.di = di
         self.co = co
         self.ir = ir
@@ -154,7 +154,7 @@ class ModbusTCPFrame:
     :except EOFError: Not enough data for complete frame; no data consumed.
     """
 
-    def __init__(self, stream=None):
+    def __init__(self, stream=None) -> None:
         self.transaction_id = 0
         self.protocol_id = 0
         self.length = 2
@@ -165,7 +165,7 @@ class ModbusTCPFrame:
         if stream is not None:
             self.from_bytearray(stream)
 
-    def from_bytearray(self, stream):
+    def from_bytearray(self, stream) -> None:
         """
         Constructs this frame from input data stream, consuming as many bytes as necessary from
         the beginning of the stream.
@@ -273,7 +273,7 @@ class ModbusProtocol:
     :param datastore: ModbusDataStore instance to reference when processing requests
     """
 
-    def __init__(self, sender, datastore):
+    def __init__(self, sender, datastore) -> None:
         self._buffer = bytearray()
         self._datastore = datastore
         self._send = lambda req: sender(req.to_bytearray())
@@ -290,7 +290,7 @@ class ModbusProtocol:
             0x10: self._handle_write_multiple_registers,
         }
 
-    def process(self, data, device_lock):
+    def process(self, data, device_lock) -> None:
         """
         Process as much of given data as possible.
 
@@ -530,7 +530,7 @@ class ModbusProtocol:
 
 @has_log
 class ModbusHandler(asyncore.dispatcher_with_send):
-    def __init__(self, sock, interface, server):
+    def __init__(self, sock, interface, server) -> None:
         asyncore.dispatcher_with_send.__init__(self, sock=sock)
         self._datastore = ModbusDataStore(interface.di, interface.co, interface.ir, interface.hr)
         self._modbus = ModbusProtocol(self.send, self._datastore)
@@ -539,11 +539,11 @@ class ModbusHandler(asyncore.dispatcher_with_send):
         self._set_logging_context(interface)
         self.log.info("Client connected from %s:%s", *sock.getpeername())
 
-    def handle_read(self):
+    def handle_read(self) -> None:
         data = self.recv(8192)
         self._modbus.process(data, self._server.device_lock)
 
-    def handle_close(self):
+    def handle_close(self) -> None:
         self.log.info("Closing connection to client %s:%s", *self.socket.getpeername())
         self._server.remove_handler(self)
         self.close()
@@ -551,7 +551,7 @@ class ModbusHandler(asyncore.dispatcher_with_send):
 
 @has_log
 class ModbusServer(asyncore.dispatcher):
-    def __init__(self, host, port, interface, device_lock):
+    def __init__(self, host, port, interface, device_lock) -> None:
         asyncore.dispatcher.__init__(self)
         self.device_lock = device_lock
         self.interface = interface
@@ -565,17 +565,17 @@ class ModbusServer(asyncore.dispatcher):
 
         self._accepted_connections = []
 
-    def handle_accept(self):
+    def handle_accept(self) -> None:
         pair = self.accept()
         if pair is not None:
             sock, _ = pair
             handler = ModbusHandler(sock, self.interface, self)
             self._accepted_connections.append(handler)
 
-    def remove_handler(self, handler):
+    def remove_handler(self, handler) -> None:
         self._accepted_connections.remove(handler)
 
-    def handle_close(self):
+    def handle_close(self) -> None:
         self.log.info("Shutting down server, closing all remaining client connections.")
 
         for handler in self._accepted_connections:
@@ -587,11 +587,11 @@ class ModbusServer(asyncore.dispatcher):
 class ModbusAdapter(Adapter):
     default_options = {"bind_address": "0.0.0.0", "port": 502}
 
-    def __init__(self, options=None):
+    def __init__(self, options=None) -> None:
         super(ModbusAdapter, self).__init__(options)
         self._server = None
 
-    def start_server(self):
+    def start_server(self) -> None:
         self._server = ModbusServer(
             self._options.bind_address,
             self._options.port,
@@ -599,7 +599,7 @@ class ModbusAdapter(Adapter):
             self.device_lock,
         )
 
-    def stop_server(self):
+    def stop_server(self) -> None:
         if self._server is not None:
             self._server.close()
             self._server = None
@@ -608,7 +608,7 @@ class ModbusAdapter(Adapter):
     def is_running(self):
         return self._server is not None
 
-    def handle(self, cycle_delay=0.1):
+    def handle(self, cycle_delay=0.1) -> None:
         asyncore.loop(cycle_delay, count=1)
 
 

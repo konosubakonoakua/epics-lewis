@@ -211,7 +211,7 @@ def parse_adapter_options(raw_adapter_options):
     return protocols
 
 
-def run_simulation(argument_list=None):  # noqa: C901
+def run_simulation(argument_list=None) -> None:  # noqa: C901
     """
     This is effectively the main function of a typical simulation run. Arguments passed in are
     parsed and used to construct and run the simulation.

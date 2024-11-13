@@ -76,7 +76,7 @@ class BoundPV:
     :param meta_target: Object that has an attribute named pv.meta_data_property.
     """
 
-    def __init__(self, pv, target, meta_target=None):
+    def __init__(self, pv, target, meta_target=None) -> None:
         self._meta_target = meta_target
         self._target = target
         self._pv = pv
@@ -87,7 +87,7 @@ class BoundPV:
         return getattr(self._target, self._pv.property)
 
     @value.setter
-    def value(self, new_value):
+    def value(self, new_value) -> None:
         if self.read_only:
             raise AccessViolationException(
                 "The property {} is read only.".format(self._pv.property)
@@ -217,7 +217,7 @@ class PV:
         meta_data_property=None,
         doc=None,
         **kwargs,
-    ):
+    ) -> None:
         self.property = "value"
         self.read_only = read_only
         self.poll_interval = poll_interval
@@ -372,7 +372,7 @@ class PV:
                 "methods does not count towards that number.".format(func.__name__)
             )
 
-        def setter(obj, value):
+        def setter(obj, value) -> None:
             func(value)
 
         return setter
@@ -415,7 +415,7 @@ class PV:
 
 @has_log
 class PropertyExposingDriver(Driver):
-    def __init__(self, interface, device_lock):
+    def __init__(self, interface, device_lock) -> None:
         super(PropertyExposingDriver, self).__init__()
 
         self._interface = interface
@@ -425,7 +425,7 @@ class PropertyExposingDriver(Driver):
         self._timers = {k: 0.0 for k in self._interface.bound_pvs.keys()}
         self._last_update_call = None
 
-    def write(self, pv, value):
+    def write(self, pv, value) -> bool:
         self.log.debug("PV put request: %s=%s", pv, value)
 
         pv_object = self._interface.bound_pvs.get(pv)
@@ -476,7 +476,7 @@ class PropertyExposingDriver(Driver):
 
         return info_dict
 
-    def process_pv_updates(self, force=False):
+    def process_pv_updates(self, force=False) -> None:
         """
         Update PV values that have changed for PVs that are due to update according to their
         respective poll interval timers.
@@ -511,7 +511,7 @@ class PropertyExposingDriver(Driver):
 
         self._last_update_call = datetime.now()
 
-    def _process_value_updates(self, updates):
+    def _process_value_updates(self, updates) -> None:
         if updates:
             update_log = []
             for pv, value in updates:
@@ -523,7 +523,7 @@ class PropertyExposingDriver(Driver):
             # Calling this manually is only required for values, not for meta
             self.updatePVs()
 
-    def _process_meta_updates(self, updates):
+    def _process_meta_updates(self, updates) -> None:
         if updates:
             update_log = []
             for pv, info in updates:
@@ -549,7 +549,7 @@ class EpicsAdapter(Adapter):
 
     default_options = {"prefix": ""}
 
-    def __init__(self, options=None):
+    def __init__(self, options=None) -> None:
         super(EpicsAdapter, self).__init__(options)
 
         self._server = None
@@ -573,7 +573,7 @@ class EpicsAdapter(Adapter):
 
         return "\n\n".join([inspect.getdoc(self.interface) or "", "PVs\n==="] + pvs)
 
-    def start_server(self):
+    def start_server(self) -> None:
         """
         Creates a pcaspy-server.
 
@@ -597,7 +597,7 @@ class EpicsAdapter(Adapter):
                 ", ".join((self._options.prefix + pv for pv in self.interface.bound_pvs.keys())),
             )
 
-    def stop_server(self):
+    def stop_server(self) -> None:
         self._driver = None
         self._server = None
 
@@ -605,7 +605,7 @@ class EpicsAdapter(Adapter):
     def is_running(self):
         return self._server is not None
 
-    def handle(self, cycle_delay=0.1):
+    def handle(self, cycle_delay=0.1) -> None:
         """
         Call this method to spend about ``cycle_delay`` seconds processing
         requests in the pcaspy server. Under load, for example when running ``caget`` at a
@@ -677,7 +677,7 @@ class EpicsInterface(InterfaceBase):
     protocol = "epics"
     pvs = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(EpicsInterface, self).__init__()
         self.bound_pvs = None
 
@@ -685,7 +685,7 @@ class EpicsInterface(InterfaceBase):
     def adapter(self):
         return EpicsAdapter
 
-    def _bind_device(self):
+    def _bind_device(self) -> None:
         """
         This method transforms the ``self.pvs`` dict of :class:`PV` objects ``self.bound_pvs``,
         a dict of :class:`BoundPV` objects, the keys are always the PV-names that are exposed

@@ -19,21 +19,21 @@
 
 
 class Bearings:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def disengage(self):
+    def disengage(self) -> None:
         pass
 
-    def engage(self):
+    def engage(self) -> None:
         pass
 
 
 class MagneticBearings(Bearings):
-    def __init__(self):
+    def __init__(self) -> None:
         super(MagneticBearings, self).__init__()
 
 
 class MechanicalBearings(Bearings):
-    def __init__(self):
+    def __init__(self) -> None:
         super(MechanicalBearings, self).__init__()

@@ -44,7 +44,7 @@ class SimulatedJulabo(StateMachineDevice):
     circulate_commanded = False
     temperature_ramp_rate = 5.0  # Guessed value in C/min
 
-    def _initialize_data(self):
+    def _initialize_data(self) -> None:
         """
         This method is called once on construction. After that, it may be
         manually called again to reset the device to its default state.
@@ -63,7 +63,7 @@ class SimulatedJulabo(StateMachineDevice):
             "not_circulate": states.DefaultNotCirculatingState(),
         }
 
-    def _get_initial_state(self):
+    def _get_initial_state(self) -> str:
         return "not_circulate"
 
     def _get_transition_handlers(self):
@@ -74,7 +74,7 @@ class SimulatedJulabo(StateMachineDevice):
             ]
         )
 
-    def set_set_point(self, param):
+    def set_set_point(self, param) -> str:
         """
         Sets the target temperature.
 
@@ -85,7 +85,7 @@ class SimulatedJulabo(StateMachineDevice):
             self.set_point_temperature = param
         return ""
 
-    def set_circulating(self, param):
+    def set_circulating(self, param) -> str:
         """
         Sets whether to circulate - in effect whether the heater is on.
 
@@ -101,7 +101,7 @@ class SimulatedJulabo(StateMachineDevice):
         return ""
 
     @check_limits(0.1, 99.9)
-    def set_internal_p(self, param):
+    def set_internal_p(self, param) -> str:
         """
         Sets the internal proportional.
         Xp in Julabo speak.
@@ -113,7 +113,7 @@ class SimulatedJulabo(StateMachineDevice):
         return ""
 
     @check_limits(3, 9999)
-    def set_internal_i(self, param):
+    def set_internal_i(self, param) -> str:
         """
         Sets the internal integral.
         Tn in Julabo speak.
@@ -125,7 +125,7 @@ class SimulatedJulabo(StateMachineDevice):
         return ""
 
     @check_limits(0, 999)
-    def set_internal_d(self, param):
+    def set_internal_d(self, param) -> str:
         """
         Sets the internal derivative.
         Tv in Julabo speak.
@@ -137,7 +137,7 @@ class SimulatedJulabo(StateMachineDevice):
         return ""
 
     @check_limits(0.1, 99.9)
-    def set_external_p(self, param):
+    def set_external_p(self, param) -> str:
         """
         Sets the external proportional.
         Xp in Julabo speak.
@@ -149,7 +149,7 @@ class SimulatedJulabo(StateMachineDevice):
         return ""
 
     @check_limits(3, 9999)
-    def set_external_i(self, param):
+    def set_external_i(self, param) -> str:
         """
         Sets the external integral.
         Tn in Julabo speak.
@@ -161,7 +161,7 @@ class SimulatedJulabo(StateMachineDevice):
         return ""
 
     @check_limits(0, 999)
-    def set_external_d(self, param):
+    def set_external_d(self, param) -> str:
         """
         Sets the external derivative.
         Tv in Julabo speak.

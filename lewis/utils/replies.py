@@ -19,11 +19,16 @@
 
 import time
 from functools import wraps
+from typing import Callable, ParamSpec, TypeVar
 
+from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
 
+T = TypeVar("T")
+P = ParamSpec("P")
 
-def _get_device_from(instance):
+
+def _get_device_from(instance: StreamInterface):
     try:
         device = instance.device
     except AttributeError:
@@ -36,10 +41,12 @@ def _get_device_from(instance):
     return device
 
 
-def conditional_reply(property_name, reply=None):
+def conditional_reply(property_name: str, reply: str | None = None) -> Callable[P, T]:
     """
-    Decorator that executes the command and replies if the device has a member called 'property name' and it is True in
-    a boolean context. Example usage:
+    Decorator that executes the command and replies if the device has a member called
+    'property name' and it is True in a boolean context.
+
+    Example usage:
 
     .. sourcecode:: Python
 
@@ -50,25 +57,25 @@ def conditional_reply(property_name, reply=None):
     :param property_name: The name of the property to look for on the device
     :param reply: Desired output reply string when condition is false
 
-    :return: The function returns as normal if property is true. The command is not executed and there is no reply if
-       property is false
+    :return: The function returns as normal if property is true.
+     The command is not executed and there is no reply if property is false
 
-    :except AttributeError if the first argument of the decorated function (self) does not contain .device or ._device
+    :except AttributeError if the first argument of the decorated function (self)
+    does not contain .device or ._device
     :except AttributeError if the device does not contain a property called property_name
     """
 
-    def decorator(func):
+    def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(self: StreamInterface, *args: P.args, **kwargs: P.kwargs) -> T:
             device = _get_device_from(self)
 
             try:
                 do_reply = getattr(device, property_name)
             except AttributeError:
                 raise AttributeError(
-                    "Expected device to contain an attribute called '{}' but it wasn't found.".format(
-                        property_name
-                    )
+                    f"Expected device to contain an attribute called '{property_name}' "
+                    f"but it wasn't found."
                 )
 
             return func(self, *args, **kwargs) if do_reply else reply
@@ -83,10 +90,14 @@ class _LastInput:
 
 
 @has_log
-def timed_reply(action, reply=None, minimum_time_delay=0):
+def timed_reply(
+    action: str, reply: str | None = None, minimum_time_delay: float = 0
+) -> Callable[P, T]:
     """
-    Decorator that inhibits a command and performs a action if call time is less than than some minimum time delay
-    between the the current and last input.  Example usage:
+    Decorator that inhibits a command and performs an action if call time is less than
+    some minimum time delay between the the current and last input.
+
+    Example usage:
 
     .. sourcecode:: Python
 
@@ -98,16 +109,17 @@ def timed_reply(action, reply=None, minimum_time_delay=0):
     :param reply: Desired output reply string when input time delay is less than the minimum
     :param minimum_time_delay: The minimum time (ms) between commands sent to the device
 
-    :return: The function returns as normal if minimum delay exceeded. The command is not executed and the action method
-     is called on the device instead
+    :return: The function returns as normal if minimum delay exceeded.
+    The command is not executed and the action method is called on the device instead
 
-    :except AttributeError if the first argument of the decorated function (self) does not contain .device or ._device
+    :except AttributeError if the first argument of the decorated function (self)
+     does not contain .device or ._device
     :except AttributeError if the device does not contain a property called action
     """
 
-    def decorator(func):
+    def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(self: StreamInterface, *args: P.args, **kwargs: P.kwargs) -> T:
             try:
                 new_input_time = int(round(time.time() * 1000))
                 time_since_last_request = new_input_time - _LastInput.last_input_time
@@ -117,9 +129,9 @@ def timed_reply(action, reply=None, minimum_time_delay=0):
                     return func(self, *args, **kwargs)
                 else:
                     self.log.info(
-                        "Violated time tolerance ({}ms) was {}ms. Calling action ({}) on device".format(
-                            minimum_time_delay, time_since_last_request, action
-                        )
+                        f"Violated time tolerance ({minimum_time_delay}ms) was"
+                        f" {time_since_last_request}ms."
+                        f" Calling action ({action}) on device"
                     )
                     device = _get_device_from(self)
                     action_function = getattr(device, action)
@@ -128,9 +140,8 @@ def timed_reply(action, reply=None, minimum_time_delay=0):
 
             except AttributeError:
                 raise AttributeError(
-                    "Expected device to contain an attribute called '{}' but it wasn't found.".format(
-                        self.action
-                    )
+                    f"Expected device to contain an attribute called '{self.action}' but it"
+                    f" wasn't found."
                 )
 
         return wrapper

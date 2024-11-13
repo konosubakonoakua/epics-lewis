@@ -42,13 +42,13 @@ class CanProcess:
     The doBefore- and doAfterProcess methods are only called if a doProcess-method exists.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(CanProcess, self).__init__()
 
     def __call__(self, dt=0):
         self.process(dt)
 
-    def process(self, dt=0):
+    def process(self, dt=0) -> None:
         if hasattr(self, "doProcess"):
             if hasattr(self, "doBeforeProcess"):
                 self.doBeforeProcess(dt)
@@ -77,7 +77,7 @@ class CanProcessComposite(CanProcess):
     and doAfterProcess methods.
     """
 
-    def __init__(self, iterable=()):
+    def __init__(self, iterable=()) -> None:
         super(CanProcessComposite, self).__init__()
 
         self._processors = []
@@ -85,13 +85,13 @@ class CanProcessComposite(CanProcess):
         for item in iterable:
             self.add_processor(item)
 
-    def add_processor(self, other):
+    def add_processor(self, other) -> None:
         if isinstance(other, CanProcess):
             self._append_processor(other)
 
-    def _append_processor(self, processor):
+    def _append_processor(self, processor) -> None:
         self._processors.append(processor)
 
-    def doProcess(self, dt):
+    def doProcess(self, dt) -> None:
         for processor in self._processors:
             processor.process(dt)

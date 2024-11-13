@@ -27,12 +27,12 @@ from lewis.core.control_client import ControlClient, ProtocolException
 from lewis.scripts import get_usage_text
 
 
-def list_objects(remote):
+def list_objects(remote) -> None:
     for obj in remote.keys():
         print(obj)
 
 
-def show_api(remote, object_name):
+def show_api(remote, object_name) -> None:
     if object_name not in remote.keys():
         raise RuntimeError("Object '{}' is not exposed by remote.".format(object_name))
 
@@ -153,7 +153,7 @@ __doc__ = (
 )
 
 
-def control_simulation(argument_list=None):
+def control_simulation(argument_list=None) -> None:
     args = parser.parse_args(argument_list or sys.argv[1:])
 
     if args.version:

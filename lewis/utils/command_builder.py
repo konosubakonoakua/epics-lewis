@@ -23,6 +23,7 @@ A fluent command builder for lewis.
 
 import re
 from functools import partial
+from typing import AnyStr
 
 from lewis.adapters.stream import Cmd, regex
 from lewis.utils.constants import ACK, ENQ, EOT, ETX, STX
@@ -51,7 +52,7 @@ class CmdBuilder(object):
     >>> CmdBuilder("set_pres").escape("pres?").enq().build()
     """
 
-    def __init__(self, target_method, arg_sep="", ignore="", ignore_case=False):
+    def __init__(self, target_method, arg_sep="", ignore="", ignore_case=False) -> None:
         """
         Create a builder. Use build to create the final object
 
@@ -72,12 +73,12 @@ class CmdBuilder(object):
 
         self._ignore_case = ignore_case
 
-    def _add_to_regex(self, regex, is_arg):
+    def _add_to_regex(self, regex, is_arg: bool) -> None:
         self._reg_ex += regex + self._ignore
         if not is_arg:
             self._current_sep = ""
 
-    def optional(self, text):
+    def optional(self, text) -> "CmdBuilder":
         """
         Add some escaped text which does not necessarily need to be there. For commands with optional parameters
         :param text: Text to add
@@ -86,7 +87,7 @@ class CmdBuilder(object):
         self._add_to_regex("(?:" + re.escape(text) + ")?", False)
         return self
 
-    def escape(self, text):
+    def escape(self, text) -> "CmdBuilder":
         """
         Add some text to the regex which is escaped.
 
@@ -96,17 +97,17 @@ class CmdBuilder(object):
         self._add_to_regex(re.escape(text), False)
         return self
 
-    def regex(self, regex):
+    def regex(self, new_regex: str) -> "CmdBuilder":
         """
         Add a regex to match but not as an argument.
 
-        :param regex: regex to add
+        :param new_regex: regex to add
         :return: builder
         """
-        self._add_to_regex(regex, False)
+        self._add_to_regex(new_regex, False)
         return self
 
-    def enum(self, *allowed_values):
+    def enum(self, *allowed_values: AnyStr) -> "CmdBuilder":
         """
         Matches one of a set of specified strings.
 
@@ -120,7 +121,7 @@ class CmdBuilder(object):
         self.argument_mappings.append(string_arg)
         return self
 
-    def spaces(self, at_least_one=False):
+    def spaces(self, at_least_one: bool = False) -> "CmdBuilder":
         """
         Add a regex for any number of spaces
 
@@ -133,7 +134,7 @@ class CmdBuilder(object):
         self._add_to_regex(" " + wildcard, False)
         return self
 
-    def arg(self, arg_regex, argument_mapping=string_arg):
+    def arg(self, arg_regex, argument_mapping: partial = string_arg) -> "CmdBuilder":
         """
         Add an argument to the command.
 
@@ -146,7 +147,7 @@ class CmdBuilder(object):
         self.argument_mappings.append(argument_mapping)
         return self
 
-    def string(self, length=None):
+    def string(self, length: None | int = None) -> "CmdBuilder":
         """
         Add an argument which is a string of a given length (if blank string is any length)
 
@@ -159,7 +160,7 @@ class CmdBuilder(object):
             self.arg(".{{{}}}".format(length))
         return self
 
-    def float(self, mapping=float, ignore=False):
+    def float(self, mapping: type = float, ignore: bool = False) -> "CmdBuilder":
         """
         Add a float argument.
 
@@ -170,7 +171,7 @@ class CmdBuilder(object):
         regex = r"[+-]?\d+\.?\d*"
         return self.regex(regex) if ignore else self.arg(regex, mapping)
 
-    def digit(self, mapping=int, ignore=False):
+    def digit(self, mapping: type = int, ignore: bool = False) -> "CmdBuilder":
         """
         Add a single digit argument.
 
@@ -180,7 +181,7 @@ class CmdBuilder(object):
         """
         return self.regex(r"\d") if ignore else self.arg(r"\d", mapping)
 
-    def char(self, not_chars=None, ignore=False):
+    def char(self, not_chars: None | list[str] | str = None, ignore=False) -> "CmdBuilder":
         """
         Add a single character argument.
 
@@ -188,10 +189,10 @@ class CmdBuilder(object):
         :param ignore: True to match with a char but ignore the returned value (default: False)
         :return: builder
         """
-        regex = r"." if not_chars is None else "[^{}]".format("".join(not_chars))
-        return self.regex(regex) if ignore else self.arg(regex)
+        _regex = r"." if not_chars is None else "[^{}]".format("".join(not_chars))
+        return self.regex(_regex) if ignore else self.arg(_regex)
 
-    def int(self, mapping=int, ignore=False):
+    def int(self, mapping: type = int, ignore: bool = False) -> "CmdBuilder":
         """
         Add an integer argument.
 
@@ -199,10 +200,10 @@ class CmdBuilder(object):
         :param ignore: True to match with a int but ignore the returned value (default: False)
         :return:  builder
         """
-        regex = r"[+-]?\d+"
-        return self.regex(regex) if ignore else self.arg(regex, mapping)
+        _regex = r"[+-]?\d+"
+        return self.regex(_regex) if ignore else self.arg(_regex, mapping)
 
-    def any(self):
+    def any(self) -> "CmdBuilder":
         """
         Add an argument that matches anything.
 
@@ -210,7 +211,7 @@ class CmdBuilder(object):
         """
         return self.arg(r".*")
 
-    def any_except(self, char):
+    def any_except(self, char: str) -> "CmdBuilder":
         """
         Adds an argument that matches anything other than a specified character (useful for commands containing
         delimiters)
@@ -220,7 +221,7 @@ class CmdBuilder(object):
         """
         return self.arg(r"[^{}]*".format(re.escape(char)))
 
-    def build(self, *args, **kwargs):
+    def build(self, *args, **kwargs) -> Cmd:
         """
         Builds the CMd object based on the target and regular expression.
 
@@ -241,7 +242,7 @@ class CmdBuilder(object):
             **kwargs,
         )
 
-    def add_ascii_character(self, char_number):
+    def add_ascii_character(self, char_number: int) -> "CmdBuilder":
         """
         Add a single character based on its integer value, e.g. 49 is 'a'.
 
@@ -251,7 +252,7 @@ class CmdBuilder(object):
         self._add_to_regex(chr(char_number), False)
         return self
 
-    def stx(self):
+    def stx(self) -> "CmdBuilder":
         """
         Add the STX character (0x2) to the string.
 
@@ -259,7 +260,7 @@ class CmdBuilder(object):
         """
         return self.escape(STX)
 
-    def etx(self):
+    def etx(self) -> "CmdBuilder":
         """
         Add the ETX character (0x3) to the string.
 
@@ -267,7 +268,7 @@ class CmdBuilder(object):
         """
         return self.escape(ETX)
 
-    def eot(self):
+    def eot(self) -> "CmdBuilder":
         """
         Add the EOT character (0x4) to the string.
 
@@ -275,7 +276,7 @@ class CmdBuilder(object):
         """
         return self.escape(EOT)
 
-    def enq(self):
+    def enq(self) -> "CmdBuilder":
         """
         Add the ENQ character (0x5) to the string.
 
@@ -283,7 +284,7 @@ class CmdBuilder(object):
         """
         return self.escape(ENQ)
 
-    def ack(self):
+    def ack(self) -> "CmdBuilder":
         """
         Add the ACK character (0x6) to the string.
 
@@ -291,7 +292,7 @@ class CmdBuilder(object):
         """
         return self.escape(ACK)
 
-    def eos(self):
+    def eos(self) -> "CmdBuilder":
         """
         Adds the regex end-of-string character to a command.
 
@@ -300,7 +301,7 @@ class CmdBuilder(object):
         self._reg_ex += "$"
         return self
 
-    def get_multicommands(self, command_separator):
+    def get_multicommands(self, command_separator: AnyStr) -> "CmdBuilder":
         """
         Allows emulator to split multiple commands separated by a defined command separator, e.g. ";".
         Must be accompanied by stream device methods. See Keithley 2700 for examples

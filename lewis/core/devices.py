@@ -25,6 +25,7 @@ produces factory-like objects that create device instances and interfaces based 
 """
 
 import importlib
+from typing import NoReturn
 
 from lewis.core.exceptions import LewisException
 from lewis.core.logging import has_log
@@ -53,12 +54,12 @@ class InterfaceBase:
 
     protocol = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(InterfaceBase, self).__init__()
         self._device = None
 
     @property
-    def adapter(self):
+    def adapter(self) -> NoReturn:
         """
         Adapter type that is required to process and expose interfaces of this type. Must be
         implemented in subclasses.
@@ -77,11 +78,11 @@ class InterfaceBase:
         return self._device
 
     @device.setter
-    def device(self, new_device):
+    def device(self, new_device) -> None:
         self._device = new_device
         self._bind_device()
 
-    def _bind_device(self):
+    def _bind_device(self) -> None:
         """
         This method should perform any binding steps between device and interface. The result
         of this binding step is generally used by the adapter to process network traffic.
@@ -181,7 +182,7 @@ class DeviceBuilder:
     a RuntimeError is raised.
     """
 
-    def __init__(self, module):
+    def __init__(self, module) -> None:
         self._module = module
 
         submodules = get_submodules(self._module)
@@ -423,7 +424,7 @@ class DeviceRegistry:
     :param device_module: Name of device module from which devices are loaded.
     """
 
-    def __init__(self, device_module):
+    def __init__(self, device_module) -> None:
         try:
             self._device_module = importlib.import_module(device_module)
         except ImportError:

@@ -23,7 +23,7 @@ a certain rate.
 """
 
 
-def linear(current, target, rate, dt):
+def linear(current: float, target: float, rate: float, dt: float):
     """
     This function returns the new value after moving towards
     target at the given speed constantly for the time dt.

@@ -110,7 +110,7 @@ class ChopperEpicsInterface(EpicsInterface):
     _last_command = ""
 
     @property
-    def execute_command(self):
+    def execute_command(self) -> str:
         """
         Command to execute. Possible commands are start, stop, set_phase,
         unlock, park, init, deinit.
@@ -118,7 +118,7 @@ class ChopperEpicsInterface(EpicsInterface):
         return ""
 
     @execute_command.setter
-    def execute_command(self, value):
+    def execute_command(self, value) -> None:
         command = self._commands.get(value)
 
         getattr(self.device, command)()

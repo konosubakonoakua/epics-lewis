@@ -25,7 +25,7 @@ from . import states
 
 
 class SimulatedLinkamT95(StateMachineDevice):
-    def _initialize_data(self):
+    def _initialize_data(self) -> None:
         """
         This method is called once on construction. After that, it may be
         manually called again to reset the device to its default state.
@@ -63,7 +63,7 @@ class SimulatedLinkamT95(StateMachineDevice):
             "cool": states.DefaultCoolState(),
         }
 
-    def _get_initial_state(self):
+    def _get_initial_state(self) -> str:
         return "init"
 
     def _get_transition_handlers(self):
