@@ -1,3 +1,4 @@
+"""Lewis - a library for creating hardware device simulators"""
 # -*- coding: utf-8 -*-
 # *********************************************************************
 # lewis - a library for creating hardware device simulators
@@ -18,3 +19,4 @@
 # *********************************************************************
 
 __version__ = "1.3.3"
+__all__ = []

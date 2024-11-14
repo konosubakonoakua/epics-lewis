@@ -40,7 +40,7 @@ the ``lewis`` command is available.
 Clone the repository in a location of your choice, we recommend that you do it inside a virtual
 environment so that you can keep track of the dependencies:
 ```
-$ git clone https://github.com/ess-dmsc/lewis.git
+$ git clone https://github.com/ISISComputingGroup/lewis.git
 ```
 
 If you do not have git available, you can

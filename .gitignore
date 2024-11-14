@@ -9,3 +9,6 @@ docs/_build/
 lewis.egg-info
 .DS_Store
 .venv
+docs/generated
+_build
+.approval_tests_temp

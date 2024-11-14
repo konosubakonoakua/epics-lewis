@@ -95,7 +95,7 @@ def timed_reply(
 ) -> Callable[P, T]:
     """
     Decorator that inhibits a command and performs an action if call time is less than
-    some minimum time delay between the the current and last input.
+    some minimum time delay between the current and last input.
 
     Example usage:
 
@@ -110,10 +110,11 @@ def timed_reply(
     :param minimum_time_delay: The minimum time (ms) between commands sent to the device
 
     :return: The function returns as normal if minimum delay exceeded.
-    The command is not executed and the action method is called on the device instead
+      The command is not executed and the action method is called on the device instead
 
     :except AttributeError if the first argument of the decorated function (self)
-     does not contain .device or ._device
+      does not contain .device or ._device
+
     :except AttributeError if the device does not contain a property called action
     """
 

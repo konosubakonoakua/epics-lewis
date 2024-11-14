@@ -24,7 +24,7 @@ from lewis.core.logging import has_log
 @has_log
 class LinkamT95StreamInterface(StreamInterface):
     """
-    Linkam T95 TCP stream interface
+    Linkam T95 TCP stream interface.
 
     This is the interface of a simulated Linkam T95 device. The device listens on a configured
     host:port-combination, one option to connect to it is via telnet:
@@ -94,8 +94,7 @@ class LinkamT95StreamInterface(StreamInterface):
 
         Sets the target rate of temperature change.
 
-        :param param: Rate of temperature change in C/min, multiplied by 100, as a string.
-        Must be positive.
+        :param param: Rate of temperature change in C/min, multiplied by 100, as a string. Must be positive.
         :return: Empty string.
         """
         # TODO: Is not having leading zeroes / 4 digits an error?

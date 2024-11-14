@@ -3,7 +3,7 @@
 Begin by checking-out the source from GitHub:
 
 ```
-(lewis-dev)$ git clone https://github.com/ess-dmsc/lewis.git
+(lewis-dev)$ git clone https://github.com/ISISComputingGroup/lewis.git
 ```
 
 To develop Lewis, it is strongly recommended to work in a dedicated virtual environment, otherwise

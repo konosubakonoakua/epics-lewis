@@ -14,7 +14,7 @@ prior to proceeding to the next section.
 
 ### Git Milestones
 
- - Go to https://github.com/ess-dmsc/lewis/milestones
+ - Go to https://github.com/ISISComputingGroup/lewis/milestones
  - Ensure all issues and PRs included in this release are tagged correctly
  - Create milestone for next release
  - Ensure any open issues or PRs not included are tagged for next release
@@ -33,7 +33,7 @@ prior to proceeding to the next section.
  - Update `version` in `setup.py`
 
 ### GitHub Release
- - Draft release blurb at https://github.com/ess-dmsc/lewis/releases
+ - Draft release blurb at https://github.com/ISISComputingGroup/lewis/releases
 
 ### Merge Changes
  - Merge any changes made in this section into the main branch
@@ -49,7 +49,7 @@ This should be done in a clean directory.
 ```
 $ python -m venv build
 $ . build/bin/activate
-(build) $ git clone https://github.com/ess-dmsc/lewis.git
+(build) $ git clone https://github.com/ISISComputingGroup/lewis.git
 (build) $ cd lewis
 (build) $ pip install twine wheel
 (build) $ python setup.py sdist bdist_wheel
@@ -84,9 +84,9 @@ work as expected.
 
 ### Git Release
  - Finalize and submit release blurb at:
-   https://github.com/ess-dmsc/lewis/releases
+   https://github.com/ISISComputingGroup/lewis/releases
  - Close the current milestone at:
-   https://github.com/ess-dmsc/lewis/milestones
+   https://github.com/ISISComputingGroup/lewis/milestones
 
 ### Upload PyPI Package
 The ``twine`` utility can be used to upload the packages to PyPI:
