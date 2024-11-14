@@ -166,9 +166,7 @@ version_handling.add_argument(
 other_args.add_argument(
     "-v", "--version", action="store_true", help="Prints the version and exits."
 )
-other_args.add_argument(
-    "-h", "--help", action="help", help="Shows this help message and exits."
-)
+other_args.add_argument("-h", "--help", action="help", help="Shows this help message and exits.")
 
 deprecated_args = parser.add_argument_group("Deprecated arguments")
 deprecated_args.add_argument(
@@ -181,9 +179,7 @@ deprecated_args.add_argument(
 
 __doc__ = (
     "This script is the main interaction point of the user with Lewis. The usage "
-    "is as follows:\n\n.. code-block:: none\n\n{}".format(
-        get_usage_text(parser, indent=4)
-    )
+    "is as follows:\n\n.. code-block:: none\n\n{}".format(get_usage_text(parser, indent=4))
 )
 
 
@@ -215,7 +211,7 @@ def parse_adapter_options(raw_adapter_options):
     return protocols
 
 
-def run_simulation(argument_list=None):  # noqa: C901
+def run_simulation(argument_list=None) -> None:  # noqa: C901
     """
     This is effectively the main function of a typical simulation run. Arguments passed in are
     parsed and used to construct and run the simulation.
@@ -237,9 +233,7 @@ def run_simulation(argument_list=None):  # noqa: C901
 
         loglevel = "debug" if arguments.verify else arguments.output_level
         if loglevel != "none":
-            logging.basicConfig(
-                level=getattr(logging, loglevel.upper()), format=default_log_format
-            )
+            logging.basicConfig(level=getattr(logging, loglevel.upper()), format=default_log_format)
 
         if arguments.add_path is not None:
             additional_path = os.path.abspath(arguments.add_path)
@@ -249,9 +243,7 @@ def run_simulation(argument_list=None):  # noqa: C901
         simulation_factory = SimulationFactory(arguments.device_package)
 
         if not arguments.device:
-            devices = [
-                "Please specify a device to simulate. The following devices are available:"
-            ]
+            devices = ["Please specify a device to simulate. The following devices are available:"]
 
             for dev in sorted(simulation_factory.devices):
                 devices.append("    " + dev)
@@ -264,9 +256,7 @@ def run_simulation(argument_list=None):  # noqa: C901
             return
 
         protocols = (
-            parse_adapter_options(arguments.adapter_options)
-            if not arguments.no_interface
-            else {}
+            parse_adapter_options(arguments.adapter_options) if not arguments.no_interface else {}
         )
 
         simulation = simulation_factory.create(

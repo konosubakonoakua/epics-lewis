@@ -1,7 +1,6 @@
 import inspect
 import unittest
-
-from mock import MagicMock, Mock
+from unittest.mock import MagicMock, Mock
 
 from lewis.core.adapters import Adapter, AdapterCollection, NoLock
 from lewis.core.exceptions import LewisException
@@ -85,12 +84,8 @@ class TestAdapter(unittest.TestCase):
         self.assertEqual(adapter.protocol, "foo")
 
     def test_options(self):
-        assertRaisesNothing(
-            self, DummyAdapter, "protocol", options={"bar": 2, "foo": 3}
-        )
-        self.assertRaises(
-            LewisException, DummyAdapter, "protocol", options={"invalid": False}
-        )
+        assertRaisesNothing(self, DummyAdapter, "protocol", options={"bar": 2, "foo": 3})
+        self.assertRaises(LewisException, DummyAdapter, "protocol", options={"invalid": False})
 
 
 class TestAdapterCollection(unittest.TestCase):

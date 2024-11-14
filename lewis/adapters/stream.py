@@ -22,6 +22,7 @@ import asyncore
 import inspect
 import re
 import socket
+from typing import NoReturn
 
 from scanf import scanf_compile
 
@@ -33,7 +34,7 @@ from lewis.core.utils import format_doc_text
 
 @has_log
 class StreamHandler(asynchat.async_chat):
-    def __init__(self, sock, target, stream_server):
+    def __init__(self, sock, target, stream_server) -> None:
         asynchat.async_chat.__init__(self, sock=sock)
         self.set_terminator(target.in_terminator.encode())
         self._readtimeout = target.readtimeout
@@ -47,7 +48,7 @@ class StreamHandler(asynchat.async_chat):
         self._set_logging_context(target)
         self.log.info("Client connected from %s:%s", *sock.getpeername())
 
-    def process(self, msec):
+    def process(self, msec) -> None:
         if not self._buffer:
             return
 
@@ -59,16 +60,14 @@ class StreamHandler(asynchat.async_chat):
                 self._readtimer = 0
                 request = self._get_request()
                 with self._stream_server.device_lock:
-                    error = RuntimeError(
-                        "ReadTimeout while waiting for command terminator."
-                    )
+                    error = RuntimeError("ReadTimeout while waiting for command terminator.")
                     reply = self._handle_error(request, error)
                 self._send_reply(reply)
 
         if self._buffer:
             self._readtimer += msec
 
-    def collect_incoming_data(self, data):
+    def collect_incoming_data(self, data) -> None:
         self._buffer.append(data)
         self._readtimer = 0
 
@@ -78,7 +77,7 @@ class StreamHandler(asynchat.async_chat):
         self.log.debug("Got request %s", request)
         return request
 
-    def _push(self, reply):
+    def _push(self, reply) -> None:
         try:
             if isinstance(reply, str):
                 reply = reply.encode()
@@ -91,7 +90,7 @@ class StreamHandler(asynchat.async_chat):
         except TypeError as e:
             self.log.error("Problem creating reply, type error {}!".format(e))
 
-    def _send_reply(self, reply):
+    def _send_reply(self, reply) -> None:
         if reply is not None:
             self.log.debug("Sending reply %s", reply)
             self._push(reply)
@@ -100,7 +99,7 @@ class StreamHandler(asynchat.async_chat):
         self.log.debug("Error while processing request", exc_info=error)
         return self._target.handle_error(request, error)
 
-    def found_terminator(self):
+    def found_terminator(self) -> None:
         self._readtimer = 0
 
         request = self._get_request()
@@ -108,11 +107,7 @@ class StreamHandler(asynchat.async_chat):
         with self._stream_server.device_lock:
             try:
                 cmd = next(
-                    (
-                        cmd
-                        for cmd in self._target.bound_commands
-                        if cmd.can_process(request)
-                    ),
+                    (cmd for cmd in self._target.bound_commands if cmd.can_process(request)),
                     None,
                 )
 
@@ -131,11 +126,11 @@ class StreamHandler(asynchat.async_chat):
 
         self._send_reply(reply)
 
-    def unsolicited_reply(self, reply):
+    def unsolicited_reply(self, reply) -> None:
         self.log.debug("Sending unsolicited reply %s", reply)
         self._push(reply)
 
-    def handle_close(self):
+    def handle_close(self) -> None:
         self.log.info("Closing connection to client %s:%s", *self.socket.getpeername())
         self._stream_server.remove_handler(self)
         asynchat.async_chat.handle_close(self)
@@ -143,7 +138,7 @@ class StreamHandler(asynchat.async_chat):
 
 @has_log
 class StreamServer(asyncore.dispatcher):
-    def __init__(self, host, port, target, device_lock):
+    def __init__(self, host, port, target, device_lock) -> None:
         asyncore.dispatcher.__init__(self)
         self.target = target
         self.device_lock = device_lock
@@ -157,7 +152,7 @@ class StreamServer(asyncore.dispatcher):
 
         self._accepted_connections = []
 
-    def handle_accept(self):
+    def handle_accept(self) -> None:
         pair = self.accept()
         if pair is not None:
             sock, addr = pair
@@ -165,10 +160,10 @@ class StreamServer(asyncore.dispatcher):
 
             self._accepted_connections.append(handler)
 
-    def remove_handler(self, handler):
+    def remove_handler(self, handler) -> None:
         self._accepted_connections.remove(handler)
 
-    def close(self):
+    def close(self) -> None:
         # As this is an old style class, the base class method must
         # be called directly. This is important to still perform all
         # the teardown-work that asyncore.dispatcher does.
@@ -181,7 +176,7 @@ class StreamServer(asyncore.dispatcher):
 
         self._accepted_connections = []
 
-    def process(self, msec):
+    def process(self, msec) -> None:
         for handler in self._accepted_connections:
             handler.process(msec)
 
@@ -199,7 +194,7 @@ class PatternMatcher:
         :class:`regex`, :class:`scanf` are concrete implementations of this class.
     """
 
-    def __init__(self, pattern):
+    def __init__(self, pattern) -> None:
         self._pattern = pattern
 
     @property
@@ -208,16 +203,16 @@ class PatternMatcher:
         return self._pattern
 
     @property
-    def arg_count(self):
+    def arg_count(self) -> NoReturn:
         """Number of arguments that are matched in a request."""
         raise NotImplementedError("The arg_count property must be implemented.")
 
     @property
-    def argument_mappings(self):
+    def argument_mappings(self) -> NoReturn:
         """Mapping functions that can be applied to the arguments returned by :meth:`match`."""
         raise NotImplementedError("The argument_mappings property must be implemented.")
 
-    def match(self, request):
+    def match(self, request) -> NoReturn:
         """
         Tries to match the request against the internally stored pattern. Returns any matched
         function arguments.
@@ -234,7 +229,7 @@ class regex(PatternMatcher):
     expression.
     """
 
-    def __init__(self, pattern):
+    def __init__(self, pattern) -> None:
         super(regex, self).__init__(pattern)
 
         self.compiled_pattern = re.compile(pattern.encode())
@@ -244,7 +239,7 @@ class regex(PatternMatcher):
         return self.compiled_pattern.groups
 
     @property
-    def argument_mappings(self):
+    def argument_mappings(self) -> None:
         return None
 
     def match(self, request):
@@ -266,8 +261,8 @@ class scanf(regex):
 
     .. sourcecode:: Python
 
-        exact = scanf('T=%f')
-        not_exact = scanf('T=%f', exact_match=False)
+        exact = scanf("T=%f")
+        not_exact = scanf("T=%f", exact_match=False)
 
     The first pattern only matches the string ``T=4.0``, whereas the second would also match
     ``T=4.0garbage``. Please note that the specifiers like ``%f`` are automatically turned into
@@ -279,7 +274,7 @@ class scanf(regex):
     .. _scanf: https://github.com/joshburnett/scanf
     """
 
-    def __init__(self, pattern, exact_match=True):
+    def __init__(self, pattern, exact_match=True) -> None:
         self._scanf_pattern = pattern
 
         generated_regex, self._argument_mappings = scanf_compile(pattern)
@@ -348,11 +343,9 @@ class Func:
 
     def __init__(
         self, func, pattern, argument_mappings=None, return_mapping=None, doc=None
-    ):
+    ) -> None:
         if not callable(func):
-            raise RuntimeError(
-                "Can not construct a Func-object from a non callable object."
-            )
+            raise RuntimeError("Can not construct a Func-object from a non callable object.")
 
         self.func = func
 
@@ -384,9 +377,7 @@ class Func:
                 )
             )
 
-        if argument_mappings is not None and (
-            self.matcher.arg_count != len(argument_mappings)
-        ):
+        if argument_mappings is not None and (self.matcher.arg_count != len(argument_mappings)):
             raise RuntimeError(
                 "Supplied argument mappings for function matched by pattern '{}' specify {} "
                 "argument(s), but the function has {} arguments.".format(
@@ -483,7 +474,7 @@ class CommandBase:
 
     def __init__(
         self, func, pattern, argument_mappings=None, return_mapping=None, doc=None
-    ):
+    ) -> None:
         super(CommandBase, self).__init__()
 
         self.func = func
@@ -492,7 +483,7 @@ class CommandBase:
         self.return_mapping = return_mapping
         self.doc = doc
 
-    def bind(self, target):
+    def bind(self, target) -> NoReturn:
         raise NotImplementedError("Binders need to implement the bind method.")
 
 
@@ -542,7 +533,7 @@ class Cmd(CommandBase):
         argument_mappings=None,
         return_mapping=lambda x: None if x is None else str(x),
         doc=None,
-    ):
+    ) -> None:
         super(Cmd, self).__init__(func, pattern, argument_mappings, return_mapping, doc)
 
     def bind(self, target):
@@ -617,10 +608,8 @@ class Var(CommandBase):
         argument_mappings=None,
         return_mapping=lambda x: None if x is None else str(x),
         doc=None,
-    ):
-        super(Var, self).__init__(
-            target_member, None, argument_mappings, return_mapping, doc
-        )
+    ) -> None:
+        super(Var, self).__init__(target_member, None, argument_mappings, return_mapping, doc)
 
         self.target = None
 
@@ -654,7 +643,7 @@ class Var(CommandBase):
 
         if self.write_pattern is not None:
 
-            def setter(new_value):
+            def setter(new_value) -> None:
                 setattr(target, self.func, new_value)
 
             # Copy docstring if target is a @property
@@ -691,7 +680,7 @@ class StreamAdapter(Adapter):
 
     default_options = {"telnet_mode": False, "bind_address": "0.0.0.0", "port": 9999}
 
-    def __init__(self, options=None):
+    def __init__(self, options=None) -> None:
         super(StreamAdapter, self).__init__(options)
         self._server = None
 
@@ -702,9 +691,7 @@ class StreamAdapter(Adapter):
                 cmd.matcher.pattern,
                 format_doc_text(cmd.doc or inspect.getdoc(cmd.func) or ""),
             )
-            for cmd in sorted(
-                self.interface.bound_commands, key=lambda x: x.matcher.pattern
-            )
+            for cmd in sorted(self.interface.bound_commands, key=lambda x: x.matcher.pattern)
         ]
 
         options = format_doc_text(
@@ -726,7 +713,7 @@ class StreamAdapter(Adapter):
             + commands
         )
 
-    def start_server(self):
+    def start_server(self) -> None:
         """
         Starts the TCP stream server, binding to the configured host and port.
         Host and port are configured via the command line arguments.
@@ -747,7 +734,7 @@ class StreamAdapter(Adapter):
                 self.device_lock,
             )
 
-    def stop_server(self):
+    def stop_server(self) -> None:
         if self._server is not None:
             self._server.close()
             self._server = None
@@ -756,7 +743,7 @@ class StreamAdapter(Adapter):
     def is_running(self):
         return self._server is not None
 
-    def handle(self, cycle_delay=0.1):
+    def handle(self, cycle_delay=0.1) -> None:
         """
         Spend approximately ``cycle_delay`` seconds to process requests to the server.
 
@@ -815,6 +802,7 @@ class StreamInterface(InterfaceBase):
     In addition, the :meth:`handle_error`-method can be overridden. It is called when an exception
     is raised while handling commands.
     """
+
     protocol = "stream"
 
     in_terminator = "\r"
@@ -824,7 +812,7 @@ class StreamInterface(InterfaceBase):
 
     commands = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(StreamInterface, self).__init__()
         self.bound_commands = None
 
@@ -832,7 +820,7 @@ class StreamInterface(InterfaceBase):
     def adapter(self):
         return StreamAdapter
 
-    def _bind_device(self):
+    def _bind_device(self) -> None:
         """
         This method implements ``_bind_device`` from :class:`~lewis.core.devices.InterfaceBase`.
         It binds Cmd and Var definitions to implementations in Interface and Device.
@@ -854,15 +842,16 @@ class StreamInterface(InterfaceBase):
                 pattern = bound_cmd.matcher.pattern
                 if pattern in patterns:
                     raise RuntimeError(
-                        "The regular expression {} is "
-                        "associated with multiple commands.".format(pattern)
+                        "The regular expression {} is " "associated with multiple commands.".format(
+                            pattern
+                        )
                     )
 
                 patterns.add(pattern)
 
                 self.bound_commands.append(bound_cmd)
 
-    def handle_error(self, request, error):
+    def handle_error(self, request, error) -> None:
         """
         Override this method to handle exceptions that are raised during command processing.
         The default implementation does nothing, so that any errors are silently ignored.

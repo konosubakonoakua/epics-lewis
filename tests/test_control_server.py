@@ -19,9 +19,9 @@
 
 import socket
 import unittest
+from unittest.mock import Mock, call, patch
 
 import zmq
-from mock import Mock, call, patch
 
 from lewis.core.control_server import (
     ControlServer,
@@ -83,9 +83,7 @@ class TestRPCObject(unittest.TestCase):
             self.assertTrue(method in rpc_object)
 
     def test_selected_and_excluded_methods(self):
-        rpc_object = ExposedObject(
-            DummyObject(), members=("a", "getTest"), exclude=("a")
-        )
+        rpc_object = ExposedObject(DummyObject(), members=("a", "getTest"), exclude=("a"))
 
         expected_methods = [":api", "getTest"]
         self.assertEqual(len(rpc_object), len(expected_methods))
@@ -94,9 +92,7 @@ class TestRPCObject(unittest.TestCase):
             self.assertTrue(method in rpc_object)
 
     def test_inherited_not_exposed(self):
-        rpc_object = ExposedObject(
-            DummyObjectChild(), members=("a", "c"), exclude_inherited=True
-        )
+        rpc_object = ExposedObject(DummyObjectChild(), members=("a", "c"), exclude_inherited=True)
 
         expected_methods = [":api", "c:get", "c:set"]
         self.assertEqual(len(rpc_object), len(expected_methods))
@@ -114,9 +110,7 @@ class TestRPCObject(unittest.TestCase):
             self.assertTrue(method in rpc_object)
 
     def test_invalid_method_raises(self):
-        self.assertRaises(
-            AttributeError, ExposedObject, DummyObject(), ("nonExisting",)
-        )
+        self.assertRaises(AttributeError, ExposedObject, DummyObject(), ("nonExisting",))
 
     def test_attribute_wrapper_gets_value(self):
         obj = DummyObject()
@@ -181,9 +175,7 @@ class TestExposedObjectCollection(unittest.TestCase):
         self.assertEqual(set(exposed_objects), {":api", "get_objects"})
 
         self.assertEqual(len(exposed_objects.get_objects()), 0)
-        self.assertEqual(
-            exposed_objects["get_objects"](), exposed_objects.get_objects()
-        )
+        self.assertEqual(exposed_objects["get_objects"](), exposed_objects.get_objects())
 
     def test_api(self):
         exposed_objects = ExposedObjectCollection(named_objects={})
@@ -233,9 +225,7 @@ class TestExposedObjectCollection(unittest.TestCase):
         exposed_objects = ExposedObjectCollection({})
         exposed_objects.add_object(DummyObject(), "testObject")
 
-        self.assertRaises(
-            RuntimeError, exposed_objects.add_object, DummyObject(), "testObject"
-        )
+        self.assertRaises(RuntimeError, exposed_objects.add_object, DummyObject(), "testObject")
 
     def test_remove_object(self):
         exposed_objects = ExposedObjectCollection({})
@@ -299,9 +289,7 @@ class TestControlServer(unittest.TestCase):
     def test_exposed_object_is_exposed_directly(self):
         mock_collection = Mock(spec=ExposedObject)
 
-        server = ControlServer(
-            object_map=mock_collection, connection_string="127.0.0.1:10000"
-        )
+        server = ControlServer(object_map=mock_collection, connection_string="127.0.0.1:10000")
         self.assertEqual(server.exposed_object, mock_collection)
 
     @patch("lewis.core.control_server.ExposedObjectCollection")

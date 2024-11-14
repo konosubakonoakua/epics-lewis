@@ -24,10 +24,10 @@ from lewis.devices import Device
 class TimeTerminatedDevice(Device):
     param = 10
 
-    def say_world(self):
+    def say_world(self) -> str:
         return "world!"
 
-    def say_bar(self):
+    def say_bar(self) -> str:
         return "bar!"
 
 
@@ -73,7 +73,7 @@ class TimeTerminatedInterface(StreamInterface):
     in_terminator = ""
     out_terminator = "\r\n"
 
-    # Unusually long, for easier manual entry
+    # Unusually long, for easier manual entry.
     readtimeout = 2500
 
     def handle_error(self, request, error):

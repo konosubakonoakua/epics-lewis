@@ -3,7 +3,7 @@ This page documents the program usage for ``lewis`` and ``lewis-control``, the t
 tools provided as part of a Lewis installation.
 
 ## lewis
-See `lewis.scripts.run`
+See {py:meth}`lewis.scripts.run`
 
 ## lewis-control
-See `lewis.scripts.control`
+See {py:meth}`lewis.scripts.control`

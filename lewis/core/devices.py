@@ -25,6 +25,7 @@ produces factory-like objects that create device instances and interfaces based 
 """
 
 import importlib
+from typing import NoReturn
 
 from lewis.core.exceptions import LewisException
 from lewis.core.logging import has_log
@@ -53,12 +54,12 @@ class InterfaceBase:
 
     protocol = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(InterfaceBase, self).__init__()
         self._device = None
 
     @property
-    def adapter(self):
+    def adapter(self) -> NoReturn:
         """
         Adapter type that is required to process and expose interfaces of this type. Must be
         implemented in subclasses.
@@ -77,11 +78,11 @@ class InterfaceBase:
         return self._device
 
     @device.setter
-    def device(self, new_device):
+    def device(self, new_device) -> None:
         self._device = new_device
         self._bind_device()
 
-    def _bind_device(self):
+    def _bind_device(self) -> None:
         """
         This method should perform any binding steps between device and interface. The result
         of this binding step is generally used by the adapter to process network traffic.
@@ -155,9 +156,11 @@ class DeviceBuilder:
             broken=dict(
                 device_type=SimulatedDeviceType,
                 parameters=dict(
-                    override_initial_state='error',
-                    override_initial_data=dict(
-                        target=-10, position=-20.0))))
+                    override_initial_state="error",
+                    override_initial_data=dict(target=-10, position=-20.0),
+                ),
+            )
+        )
 
     The other location is a sub-package called `setups`, which should in turn contain modules. Each
     module must contain a variable ``device_type`` and a variable ``parameters`` which are
@@ -179,7 +182,7 @@ class DeviceBuilder:
     a RuntimeError is raised.
     """
 
-    def __init__(self, module):
+    def __init__(self, module) -> None:
         self._module = module
 
         submodules = get_submodules(self._module)
@@ -193,9 +196,7 @@ class DeviceBuilder:
             self._module.__name__,
             ", ".join(device_t.__name__ for device_t in self._device_types),
             ", ".join(self._setups.keys()),
-            ", ".join(
-                "(%s: %s)" % (k, v.__name__) for k, v in self._interfaces.items()
-            ),
+            ", ".join("(%s: %s)" % (k, v.__name__) for k, v in self._interfaces.items()),
         )
 
     def _discover_devices(self, devices_package):
@@ -226,9 +227,7 @@ class DeviceBuilder:
                     )
 
                 all_setups[name] = {
-                    "device_type": getattr(
-                        setup_module, "device_type", self.default_device_type
-                    ),
+                    "device_type": getattr(setup_module, "device_type", self.default_device_type),
                     "parameters": getattr(setup_module, "parameters", {}),
                 }
 
@@ -242,9 +241,7 @@ class DeviceBuilder:
 
         if interface_package is not None:
             for interface_module in get_submodules(interface_package).values():
-                all_interfaces += list(
-                    get_members(interface_module, is_interface).values()
-                )
+                all_interfaces += list(get_members(interface_module, is_interface).values())
 
         all_interfaces += list(get_members(self._module, is_interface).values())
 
@@ -369,9 +366,7 @@ class DeviceBuilder:
         )
 
         try:
-            return self._create_device_instance(
-                device_type, **setup_data.get("parameters", {})
-            )
+            return self._create_device_instance(device_type, **setup_data.get("parameters", {}))
         except RuntimeError:
             raise LewisException(
                 "The setup '{}' you tried to load does not specify a valid device type, but the "
@@ -419,8 +414,8 @@ class DeviceRegistry:
 
         from lewis.core.devices import DeviceRegistry
 
-        registry = DeviceRegistry('lewis.devices')
-        chopper_builder = registry.device_builder('chopper')
+        registry = DeviceRegistry("lewis.devices")
+        chopper_builder = registry.device_builder("chopper")
 
         # construct device, interface, ...
 
@@ -429,7 +424,7 @@ class DeviceRegistry:
     :param device_module: Name of device module from which devices are loaded.
     """
 
-    def __init__(self, device_module):
+    def __init__(self, device_module) -> None:
         try:
             self._device_module = importlib.import_module(device_module)
         except ImportError:

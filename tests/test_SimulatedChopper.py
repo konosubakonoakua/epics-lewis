@@ -44,8 +44,6 @@ class TestSimulatedChopper(unittest.TestCase):
         )
 
     def test_valid_transition_override_does_not_fail(self):
-        chopper = SimulatedChopper(
-            override_transitions={("idle", "stopping"): lambda: True}
-        )
+        chopper = SimulatedChopper(override_transitions={("idle", "stopping"): lambda: True})
 
         self.assertIsInstance(chopper, SimulatedChopper)

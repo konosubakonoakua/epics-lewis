@@ -81,7 +81,7 @@ class Simulation:
     :param control_server: 'host:port'-string to construct control server or None.
     """
 
-    def __init__(self, device, adapters=(), device_builder=None, control_server=None):
+    def __init__(self, device, adapters=(), device_builder=None, control_server=None) -> None:
         super(Simulation, self).__init__()
 
         self._device_builder = device_builder
@@ -102,9 +102,7 @@ class Simulation:
 
         # Constructing the control server must be deferred until the end,
         # because the construction is not complete at this point
-        self._control_server = (
-            None  # Just initialize to None and use property setter afterwards
-        )
+        self._control_server = None  # Just initialize to None and use property setter afterwards
         self._control_server_thread = None
         self.control_server = control_server
 
@@ -154,13 +152,9 @@ class Simulation:
         A list of setups that are available. Use :meth:`switch_setup` to
         change the setup.
         """
-        return (
-            list(self._device_builder.setups.keys())
-            if self._device_builder is not None
-            else []
-        )
+        return list(self._device_builder.setups.keys()) if self._device_builder is not None else []
 
-    def switch_setup(self, new_setup):
+    def switch_setup(self, new_setup) -> None:
         """
         This method switches the setup, which means that it replaces the currently
         simulated device with a new device, as defined by the setup.
@@ -181,7 +175,7 @@ class Simulation:
             )
             raise
 
-    def start(self):
+    def start(self) -> None:
         """
         Starts the simulation.
         """
@@ -207,23 +201,21 @@ class Simulation:
 
         self.log.info("Simulation has ended.")
 
-    def _start_control_server(self):
+    def _start_control_server(self) -> None:
         if self._control_server is not None and self._control_server_thread is None:
 
-            def control_server_loop():
+            def control_server_loop() -> None:
                 self._control_server.start_server()
 
                 while not self._stop_commanded:
                     self._control_server.process(blocking=True)
 
-                self.log.info(
-                    "Stopped processing control server commands, ending thread."
-                )
+                self.log.info("Stopped processing control server commands, ending thread.")
 
             self._control_server_thread = Thread(target=control_server_loop)
             self._control_server_thread.start()
 
-    def _stop_control_server(self):
+    def _stop_control_server(self) -> None:
         if self._control_server_thread is not None:
             self._control_server_thread.join(timeout=1.0)
             self._control_server_thread = None
@@ -245,7 +237,7 @@ class Simulation:
 
         return delta
 
-    def _process_simulation_cycle(self, delta):
+    def _process_simulation_cycle(self, delta) -> None:
         """
         If the simulation is not paused, the device's process-method is
         called with the supplied delta, multiplied by the simulation speed.
@@ -277,7 +269,7 @@ class Simulation:
         return self._cycle_delay
 
     @cycle_delay.setter
-    def cycle_delay(self, delay):
+    def cycle_delay(self, delay) -> None:
         if delay < 0.0:
             raise ValueError("Cycle delay can not be negative.")
 
@@ -312,7 +304,7 @@ class Simulation:
         return self._speed
 
     @speed.setter
-    def speed(self, new_speed):
+    def speed(self, new_speed) -> None:
         if new_speed < 0:
             raise ValueError("Speed can not be negative.")
 
@@ -328,7 +320,7 @@ class Simulation:
         """
         return self._runtime
 
-    def set_device_parameters(self, parameters):
+    def set_device_parameters(self, parameters) -> None:
         """
         Set multiple parameters of the simulated device "simultaneously". The passed
         parameter is assumed to be device parameter/value dict.
@@ -354,7 +346,7 @@ class Simulation:
 
         self.log.debug("Updated device parameters: %s", parameters)
 
-    def pause(self):
+    def pause(self) -> None:
         """
         Pause the simulation. Can only be called after start has been called.
         """
@@ -365,7 +357,7 @@ class Simulation:
 
         self._running = False
 
-    def resume(self):
+    def resume(self) -> None:
         """
         Resume a paused simulation. Can only be called after start
         and pause have been called.
@@ -377,7 +369,7 @@ class Simulation:
 
         self._running = True
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stops the simulation entirely.
         """
@@ -414,11 +406,9 @@ class Simulation:
         return self._control_server
 
     @control_server.setter
-    def control_server(self, control_server):
+    def control_server(self, control_server) -> None:
         if self.is_started and self._control_server:
-            raise RuntimeError(
-                "Can not replace control server while simulation is running."
-            )
+            raise RuntimeError("Can not replace control server while simulation is running.")
 
         self._control_server = self._create_control_server(control_server)
 
@@ -434,20 +424,20 @@ class SimulationFactory:
 
     .. sourcecode:: Python
 
-        factory = SimulationFactory('lewis.devices')
+        factory = SimulationFactory("lewis.devices")
 
     The actual creation happens via the :meth:`create`-method:
 
     .. sourcecode:: Python
 
-        simulation = factory.create('device_name', protocol='protocol')
+        simulation = factory.create("device_name", protocol="protocol")
 
     The simulation can then be started and stopped as desired.
 
     .. warning:: This class is meant for internal use at the moment and may change frequently.
     """
 
-    def __init__(self, devices_package):
+    def __init__(self, devices_package) -> None:
         self._reg = DeviceRegistry(devices_package)
 
     @property

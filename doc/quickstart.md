@@ -88,7 +88,7 @@ P?
 9.106584
 ```
 
-See [the source code](https://github.com/ess-dmsc/lewis/blob/main/lewis/examples/example_motor/__init__.py) of the example motor if you want to see what makes it tick.
+See [the source code](https://github.com/ISISComputingGroup/lewis/blob/main/lewis/examples/example_motor/__init__.py) of the example motor if you want to see what makes it tick.
 
 ## Connect to Motor via Control Client
 In addition to the simulated TCP Stream interface, Lewis provides a so-called Control Server interface, which allows you to bypass the normal device protocol and access both device and simulation parameters directly while the simulation is running. This can be very useful for debugging and diagnostics, without having to modify the main device interface.

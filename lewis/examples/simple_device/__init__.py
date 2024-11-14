@@ -66,7 +66,7 @@ class VerySimpleInterface(StreamInterface):
         """Returns the device parameter."""
         return self.device.param
 
-    def set_param(self, new_param):
+    def set_param(self, new_param) -> None:
         """Set the device parameter, does not return anything."""
         self.device.param = new_param
 

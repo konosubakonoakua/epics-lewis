@@ -26,7 +26,7 @@ from lewis.devices import StateMachineDevice
 
 
 class DefaultMovingState(State):
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         old_position = self._context.position
         self._context.position = approaches.linear(
             old_position, self._context.target, self._context.speed, dt
@@ -41,7 +41,7 @@ class DefaultMovingState(State):
 
 
 class SimulatedExampleMotor(StateMachineDevice):
-    def _initialize_data(self):
+    def _initialize_data(self) -> None:
         self.position = 0.0
         self._target = 0.0
         self.speed = 2.0
@@ -49,7 +49,7 @@ class SimulatedExampleMotor(StateMachineDevice):
     def _get_state_handlers(self):
         return {"idle": State(), "moving": DefaultMovingState()}
 
-    def _get_initial_state(self):
+    def _get_initial_state(self) -> str:
         return "idle"
 
     def _get_transition_handlers(self):
@@ -69,7 +69,7 @@ class SimulatedExampleMotor(StateMachineDevice):
         return self._target
 
     @target.setter
-    def target(self, new_target):
+    def target(self, new_target) -> None:
         if self.state == "moving":
             raise RuntimeError("Can not set new target while moving.")
 

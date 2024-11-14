@@ -20,8 +20,7 @@
 import importlib
 import unittest
 from datetime import datetime
-
-from mock import patch
+from unittest.mock import patch
 
 from lewis.core.exceptions import LewisException, LimitViolationException
 from lewis.core.utils import (
@@ -147,23 +146,23 @@ class TestFromOptionalDependency(unittest.TestCase):
         )
 
     def test_non_existing_module_works(self):
-        A, B = FromOptionalDependency("invalid_module").do_import("A", "B")
+        a, b = FromOptionalDependency("invalid_module").do_import("A", "B")
 
-        self.assertEqual(A.__name__, "A")
-        self.assertEqual(B.__name__, "B")
+        self.assertEqual(a.__name__, "A")
+        self.assertEqual(b.__name__, "B")
 
-        self.assertRaises(LewisException, A, "argument_one")
-        self.assertRaises(LewisException, B, "argument_one", "argument_two")
+        self.assertRaises(LewisException, a, "argument_one")
+        self.assertRaises(LewisException, b, "argument_one", "argument_two")
 
     def test_string_exception_is_raised(self):
-        A = FromOptionalDependency("invalid_module", "test").do_import("A")
+        a = FromOptionalDependency("invalid_module", "test").do_import("A")
 
-        self.assertRaises(LewisException, A)
+        self.assertRaises(LewisException, a)
 
     def test_custom_exception_is_raised(self):
-        A = FromOptionalDependency("invalid_module", ValueError("test")).do_import("A")
+        a = FromOptionalDependency("invalid_module", ValueError("test")).do_import("A")
 
-        self.assertRaises(ValueError, A)
+        self.assertRaises(ValueError, a)
 
     def test_exception_does_not_accept_arbitrary_type(self):
         self.assertRaises(RuntimeError, FromOptionalDependency, "invalid_module", 6.0)
@@ -182,9 +181,7 @@ class TestFormatDocText(unittest.TestCase):
 
     def test_long_lines_are_broken(self):
         text = " ".join(["ab"] * 44)
-        expected = (
-            "    " + " ".join(["ab"] * 32) + "\n" + "    " + " ".join(["ab"] * 12)
-        )
+        expected = "    " + " ".join(["ab"] * 32) + "\n" + "    " + " ".join(["ab"] * 12)
 
         self.assertEqual(format_doc_text(text), expected)
 

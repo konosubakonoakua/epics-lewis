@@ -30,6 +30,7 @@ from datetime import datetime
 from os import listdir
 from os import path as osp
 from types import ModuleType
+from typing import NoReturn
 
 from lewis.core.exceptions import LewisException, LimitViolationException
 from lewis.core.logging import has_log
@@ -127,7 +128,7 @@ def extract_module_name(absolute_path):
     return None
 
 
-def dict_strict_update(base_dict, update_dict):
+def dict_strict_update(base_dict, update_dict) -> None:
     """
     This function updates base_dict with update_dict if and only if update_dict does not contain
     keys that are not already in base_dict. It is essentially a more strict interpretation of the
@@ -210,7 +211,7 @@ class FromOptionalDependency:
     :param exception: Text for LewisException or custom exception object.
     """
 
-    def __init__(self, module, exception=None):
+    def __init__(self, module, exception=None) -> None:
         self._module = module
 
         if exception is None:
@@ -246,7 +247,7 @@ class FromOptionalDependency:
             objects = tuple(getattr(module_object, name) for name in names)
         except ImportError:
 
-            def failing_init(obj, *args, **kwargs):
+            def failing_init(obj, *args, **kwargs) -> NoReturn:
                 raise self._exception
 
             objects = tuple(type(name, (object,), {"__init__": failing_init}) for name in names)
@@ -339,7 +340,7 @@ class check_limits:
     :param silent: A limit violation will not raise an exception if this option is ``True``.
     """
 
-    def __init__(self, lower=None, upper=None, silent=False):
+    def __init__(self, lower=None, upper=None, silent=False) -> None:
         self._lower = lower
         self._upper = upper
         self._silent = silent

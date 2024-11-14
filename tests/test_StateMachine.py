@@ -18,8 +18,7 @@
 # *********************************************************************
 
 import unittest
-
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 
 from lewis.core.statemachine import (
     State,
@@ -50,9 +49,7 @@ class TestStateMachine(unittest.TestCase):
         )
 
     def test_can_transition_with_lambda(self):
-        sm = StateMachine(
-            {"initial": "foo", "transitions": {("foo", "bar"): lambda: True}}
-        )
+        sm = StateMachine({"initial": "foo", "transitions": {("foo", "bar"): lambda: True}})
 
         self.assertIsNone(sm.state)
         sm.process(0.1)
@@ -62,9 +59,7 @@ class TestStateMachine(unittest.TestCase):
 
     def test_can_transition_with_callable(self):
         transition = Mock(return_value=True)
-        sm = StateMachine(
-            {"initial": "foo", "transitions": {("foo", "bar"): transition}}
-        )
+        sm = StateMachine({"initial": "foo", "transitions": {("foo", "bar"): transition}})
 
         transition.assert_not_called()
         self.assertIsNone(sm.state)
@@ -78,9 +73,7 @@ class TestStateMachine(unittest.TestCase):
     @patch.object(Transition, "__call__", return_value=True)
     def test_can_transition_with_Transition(self, tr_call):
         transition = Transition()
-        sm = StateMachine(
-            {"initial": "foo", "transitions": {("foo", "bar"): transition}}
-        )
+        sm = StateMachine({"initial": "foo", "transitions": {("foo", "bar"): transition}})
 
         tr_call.assert_not_called()
         self.assertIsNone(sm.state)
@@ -223,9 +216,7 @@ class TestStateMachine(unittest.TestCase):
 
     def test_bind_handlers_by_name_default_behaviour(self):
         target = Mock()
-        sm = StateMachine(
-            {"initial": "foo", "transitions": {("foo", "bar"): lambda: True}}
-        )
+        sm = StateMachine({"initial": "foo", "transitions": {("foo", "bar"): lambda: True}})
         sm.bind_handlers_by_name(target)
 
         # First cycle enters and executes initial state, but forces delta T to zero
@@ -254,9 +245,7 @@ class TestStateMachine(unittest.TestCase):
 
     def test_bind_handlers_by_name_custom_prefix(self):
         target = Mock()
-        sm = StateMachine(
-            {"initial": "foo", "transitions": {("foo", "bar"): lambda: True}}
-        )
+        sm = StateMachine({"initial": "foo", "transitions": {("foo", "bar"): lambda: True}})
         sm.bind_handlers_by_name(
             target,
             prefix={
@@ -297,9 +286,7 @@ class TestStateMachine(unittest.TestCase):
         # second target will 'override' the events for bar
         second = Mock(spec=["_on_entry_bar", "_in_state_bar", "_on_exit_bar"])
 
-        sm = StateMachine(
-            {"initial": "foo", "transitions": {("foo", "bar"): lambda: True}}
-        )
+        sm = StateMachine({"initial": "foo", "transitions": {("foo", "bar"): lambda: True}})
         sm.bind_handlers_by_name(first)
         sm.bind_handlers_by_name(second, override=True)
 
@@ -333,9 +320,7 @@ class TestStateMachine(unittest.TestCase):
         first._on_exit_bar.assert_not_called()
 
     def test_reset(self):
-        sm = StateMachine(
-            {"initial": "foo", "transitions": {("foo", "bar"): lambda: True}}
-        )
+        sm = StateMachine({"initial": "foo", "transitions": {("foo", "bar"): lambda: True}})
 
         self.assertIsNone(sm.state)
         sm.reset()

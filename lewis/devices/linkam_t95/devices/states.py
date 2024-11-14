@@ -26,19 +26,19 @@ class DefaultInitState(State):
 
 
 class DefaultStoppedState(State):
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         # Reset the stop commanded flag once we enter the stopped state
         self._context.stop_commanded = False
 
 
 class DefaultStartedState(State):
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         # Reset the start commanded flag once we enter the started state
         self._context.start_commanded = False
 
 
 class DefaultHeatState(State):
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         # Approach target temperature at set temperature rate
         self._context.temperature = approaches.linear(
             self._context.temperature,
@@ -53,7 +53,7 @@ class DefaultHoldState(State):
 
 
 class DefaultCoolState(State):
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         # TODO: Does manual control work like this? Or is it perhaps a separate state?
         if self._context.pump_manual_mode:
             self._context.pump_speed = self._context.manual_target_speed
@@ -78,7 +78,7 @@ class DefaultCoolState(State):
             dt,
         )
 
-    def on_exit(self, dt):
+    def on_exit(self, dt) -> None:
         # If we exit the cooling state, the cooling pump should no longer run
         self._context.pump_overspeed = False
         self._context.pump_speed = 0

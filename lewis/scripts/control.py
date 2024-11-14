@@ -27,12 +27,12 @@ from lewis.core.control_client import ControlClient, ProtocolException
 from lewis.scripts import get_usage_text
 
 
-def list_objects(remote):
+def list_objects(remote) -> None:
     for obj in remote.keys():
         print(obj)
 
 
-def show_api(remote, object_name):
+def show_api(remote, object_name) -> None:
     if object_name not in remote.keys():
         raise RuntimeError("Object '{}' is not exposed by remote.".format(object_name))
 
@@ -61,11 +61,7 @@ def show_api(remote, object_name):
     print("Methods:")
     print(
         "\n".join(
-            sorted(
-                "    {}".format(member)
-                for member in dir(obj)
-                if is_remote_method(obj, member)
-            )
+            sorted("    {}".format(member) for member in dir(obj) if is_remote_method(obj, member))
         )
     )
 
@@ -121,8 +117,7 @@ positional_args.add_argument(
 positional_args.add_argument(
     "arguments",
     nargs="*",
-    help="Arguments to method call. For setting a property, "
-    "supply the property value. ",
+    help="Arguments to method call. For setting a property, " "supply the property value. ",
 )
 
 optional_args = parser.add_argument_group("Optional arguments")
@@ -150,9 +145,7 @@ optional_args.add_argument(
 optional_args.add_argument(
     "-v", "--version", action="store_true", help="Prints the version and exits."
 )
-optional_args.add_argument(
-    "-h", "--h", action="help", help="Shows this help message and exits."
-)
+optional_args.add_argument("-h", "--h", action="help", help="Shows this help message and exits.")
 
 __doc__ = (
     "To interact with the control server of a running simulation, use this script. "
@@ -160,7 +153,7 @@ __doc__ = (
 )
 
 
-def control_simulation(argument_list=None):
+def control_simulation(argument_list=None) -> None:
     args = parser.parse_args(argument_list or sys.argv[1:])
 
     if args.version:

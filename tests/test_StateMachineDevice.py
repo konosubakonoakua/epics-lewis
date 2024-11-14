@@ -19,8 +19,7 @@
 
 import itertools
 import unittest
-
-from mock import MagicMock, Mock, call, patch
+from unittest.mock import MagicMock, Mock, call, patch
 
 from lewis.devices import StateMachineDevice
 
@@ -71,9 +70,7 @@ class TestStateMachineDevice(unittest.TestCase):
         assertRaisesNothing(self, MockStateMachineDevice, override_initial_state="init")
         assertRaisesNothing(self, MockStateMachineDevice, override_initial_state="test")
 
-        self.assertRaises(
-            RuntimeError, MockStateMachineDevice, override_initial_state="invalid"
-        )
+        self.assertRaises(RuntimeError, MockStateMachineDevice, override_initial_state="invalid")
 
     def test_overriding_undefined_data_fails(self):
         assertRaisesNothing(

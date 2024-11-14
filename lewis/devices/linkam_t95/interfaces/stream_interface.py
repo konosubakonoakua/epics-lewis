@@ -24,7 +24,7 @@ from lewis.core.logging import has_log
 @has_log
 class LinkamT95StreamInterface(StreamInterface):
     """
-    Linkam T95 TCP stream interface
+    Linkam T95 TCP stream interface.
 
     This is the interface of a simulated Linkam T95 device. The device listens on a configured
     host:port-combination, one option to connect to it is via telnet:
@@ -84,20 +84,17 @@ class LinkamT95StreamInterface(StreamInterface):
         Tarray[2] = 0x80 + self.device.pump_speed
 
         # Temperature
-        Tarray[6:10] = [
-            ord(x) for x in "%04x" % (int(self.device.temperature * 10) & 0xFFFF)
-        ]
+        Tarray[6:10] = [ord(x) for x in "%04x" % (int(self.device.temperature * 10) & 0xFFFF)]
 
         return bytes(Tarray)
 
-    def set_rate(self, param):
+    def set_rate(self, param) -> bytes:
         """
         Models "Rate Command" functionality of device.
 
         Sets the target rate of temperature change.
 
-        :param param: Rate of temperature change in C/min, multiplied by 100, as a string.
-        Must be positive.
+        :param param: Rate of temperature change in C/min, multiplied by 100, as a string. Must be positive.
         :return: Empty string.
         """
         # TODO: Is not having leading zeroes / 4 digits an error?
@@ -106,7 +103,7 @@ class LinkamT95StreamInterface(StreamInterface):
             self.device.temperature_rate = rate / 100.0
         return b""
 
-    def set_limit(self, param):
+    def set_limit(self, param) -> bytes:
         """
         Models "Limit Command" functionality of device.
 
@@ -121,7 +118,7 @@ class LinkamT95StreamInterface(StreamInterface):
             self.device.temperature_limit = limit / 10.0
         return b""
 
-    def start(self):
+    def start(self) -> bytes:
         """
         Models "Start Command" functionality of device.
 
@@ -133,7 +130,7 @@ class LinkamT95StreamInterface(StreamInterface):
         self.device.start_commanded = True
         return b""
 
-    def stop(self):
+    def stop(self) -> bytes:
         """
         Models "Stop Command" functionality of device.
 
@@ -144,7 +141,7 @@ class LinkamT95StreamInterface(StreamInterface):
         self.device.stop_commanded = True
         return b""
 
-    def hold(self):
+    def hold(self) -> bytes:
         """
         Models "Hold Command" functionality of device.
 
@@ -155,7 +152,7 @@ class LinkamT95StreamInterface(StreamInterface):
         self.device.hold_commanded = True
         return b""
 
-    def heat(self):
+    def heat(self) -> bytes:
         """
         Models "Heat Command" functionality of device.
 
@@ -165,7 +162,7 @@ class LinkamT95StreamInterface(StreamInterface):
         self.device.hold_commanded = False
         return b""
 
-    def cool(self):
+    def cool(self) -> bytes:
         """
         Models "Cool Command" functionality of device.
 
@@ -175,7 +172,7 @@ class LinkamT95StreamInterface(StreamInterface):
         self.device.hold_commanded = False
         return b""
 
-    def pump_command(self, param):
+    def pump_command(self, param) -> bytes:
         """
         Models "LNP Pump Commands" functionality of device.
 
@@ -194,7 +191,7 @@ class LinkamT95StreamInterface(StreamInterface):
             self.device.manual_target_speed = lookup.index(param)
         return b""
 
-    def handle_error(self, request, error):
+    def handle_error(self, request, error) -> None:
         """
         If command is not recognised print and error
 
@@ -203,6 +200,4 @@ class LinkamT95StreamInterface(StreamInterface):
             error: problem
 
         """
-        self.log.error(
-            "An error occurred at request " + repr(request) + ": " + repr(error)
-        )
+        self.log.error("An error occurred at request " + repr(request) + ": " + repr(error))

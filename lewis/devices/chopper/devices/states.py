@@ -22,16 +22,16 @@ from lewis.core.statemachine import State
 
 
 class DefaultInitState(State):
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         self._context._initialize_data()
 
 
 class DefaultParkingState(State):
-    def __init__(self, parking_speed=5.0):
+    def __init__(self, parking_speed=5.0) -> None:
         super(DefaultParkingState, self).__init__()
         self._parking_speed = parking_speed
 
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         self._context.parking_position = approaches.linear(
             self._context.parking_position,
             self._context.target_parking_position,
@@ -39,7 +39,7 @@ class DefaultParkingState(State):
             dt,
         )
 
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         self._context._park_commanded = False
 
 
@@ -48,60 +48,58 @@ class DefaultParkedState(State):
 
 
 class DefaultStoppingState(State):
-    def __init__(self, acceleration=5.0):
+    def __init__(self, acceleration=5.0) -> None:
         super(DefaultStoppingState, self).__init__()
         self._acceleration = acceleration
 
-    def in_state(self, dt):
-        self._context.speed = approaches.linear(
-            self._context.speed, 0.0, self._acceleration, dt
-        )
+    def in_state(self, dt) -> None:
+        self._context.speed = approaches.linear(self._context.speed, 0.0, self._acceleration, dt)
 
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         self._context._stop_commanded = False
 
 
 class DefaultStoppedState(State):
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         if self._context.auto_park:
             self._context._park_commanded = True
 
 
 class DefaultIdleState(State):
-    def __init__(self, acceleration=0.05):
+    def __init__(self, acceleration=0.05) -> None:
         super(DefaultIdleState, self).__init__()
         self._acceleration = acceleration
 
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         self._context.speed = approaches.linear(
             self._context.speed, self._context.target_speed, self._acceleration, dt
         )
 
 
-def on_entry(self, dt):
+def on_entry(self, dt) -> None:
     self._context._idle_commanded = False
 
 
 class DefaultAcceleratingState(State):
-    def __init__(self, acceleration=5.0):
+    def __init__(self, acceleration=5.0) -> None:
         super(DefaultAcceleratingState, self).__init__()
         self._acceleration = acceleration
 
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         self._context.speed = approaches.linear(
             self._context.speed, self._context.target_speed, self._acceleration, dt
         )
 
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         self._context._start_commanded = False
 
 
 class DefaultPhaseLockingState(State):
-    def __init__(self, phase_locking_speed=5.0):
+    def __init__(self, phase_locking_speed=5.0) -> None:
         super(DefaultPhaseLockingState, self).__init__()
         self._phase_locking_speed = phase_locking_speed
 
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         self._context.phase = approaches.linear(
             self._context.phase,
             self._context.target_phase,
@@ -109,7 +107,7 @@ class DefaultPhaseLockingState(State):
             dt,
         )
 
-    def on_entry(self, dt):
+    def on_entry(self, dt) -> None:
         self._context._phase_commanded = False
 
 

@@ -25,7 +25,7 @@ from . import states
 
 
 class SimulatedLinkamT95(StateMachineDevice):
-    def _initialize_data(self):
+    def _initialize_data(self) -> None:
         """
         This method is called once on construction. After that, it may be
         manually called again to reset the device to its default state.
@@ -63,7 +63,7 @@ class SimulatedLinkamT95(StateMachineDevice):
             "cool": states.DefaultCoolState(),
         }
 
-    def _get_initial_state(self):
+    def _get_initial_state(self) -> str:
         return "init"
 
     def _get_transition_handlers(self):
@@ -86,27 +86,23 @@ class SimulatedLinkamT95(StateMachineDevice):
                 ),
                 (
                     ("heat", "hold"),
-                    lambda: self.temperature == self.temperature_limit
-                    or self.hold_commanded,
+                    lambda: self.temperature == self.temperature_limit or self.hold_commanded,
                 ),
                 (("heat", "cool"), lambda: self.temperature > self.temperature_limit),
                 (("heat", "stopped"), lambda: self.stop_commanded),
                 (
                     ("hold", "heat"),
-                    lambda: self.temperature < self.temperature_limit
-                    and not self.hold_commanded,
+                    lambda: self.temperature < self.temperature_limit and not self.hold_commanded,
                 ),
                 (
                     ("hold", "cool"),
-                    lambda: self.temperature > self.temperature_limit
-                    and not self.hold_commanded,
+                    lambda: self.temperature > self.temperature_limit and not self.hold_commanded,
                 ),
                 (("hold", "stopped"), lambda: self.stop_commanded),
                 (("cool", "heat"), lambda: self.temperature < self.temperature_limit),
                 (
                     ("cool", "hold"),
-                    lambda: self.temperature == self.temperature_limit
-                    or self.hold_commanded,
+                    lambda: self.temperature == self.temperature_limit or self.hold_commanded,
                 ),
                 (("cool", "stopped"), lambda: self.stop_commanded),
             ]

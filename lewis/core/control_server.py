@@ -77,9 +77,7 @@ class ExposedObject:
     :param lock: ``threading.Lock`` that is used when accessing ``obj``.
     """
 
-    def __init__(
-        self, obj, members=None, exclude=None, exclude_inherited=False, lock=None
-    ):
+    def __init__(self, obj, members=None, exclude=None, exclude_inherited=False, lock=None) -> None:
         super(ExposedObject, self).__init__()
 
         self._object = obj
@@ -104,7 +102,7 @@ class ExposedObject:
         """
         return [prop for prop in dir(self._object) if not prop.startswith("_")]
 
-    def _add_member_wrappers(self, member):
+    def _add_member_wrappers(self, member) -> None:
         """
         This method probes the supplied member of the wrapped object and inserts an appropriate
         entry into the internal method map. Getters and setters for properties get a suffix
@@ -112,9 +110,7 @@ class ExposedObject:
 
         :param member: The member of the wrapped object to expose
         """
-        method_object = getattr(type(self._object), member, None) or getattr(
-            self._object, member
-        )
+        method_object = getattr(type(self._object), member, None) or getattr(self._object, member)
 
         if callable(method_object):
             self._add_function(member, getattr(self._object, member))
@@ -136,22 +132,20 @@ class ExposedObject:
     def __getitem__(self, item):
         return self._function_map[item]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._function_map)
 
     def __iter__(self):
         return iter(self._function_map)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         return item in self._function_map
 
-    def _add_property(self, name):
+    def _add_property(self, name) -> None:
         self._add_function("{}:get".format(name), lambda: getattr(self._object, name))
-        self._add_function(
-            "{}:set".format(name), lambda value: setattr(self._object, name, value)
-        )
+        self._add_function("{}:set".format(name), lambda value: setattr(self._object, name, value))
 
-    def _add_function(self, name, function):
+    def _add_function(self, name, function) -> None:
         if not callable(function):
             raise TypeError("Only callable objects can be exposed.")
 
@@ -168,7 +162,7 @@ class ExposedObject:
 
         self._function_map[name] = function
 
-    def _remove_function(self, name):
+    def _remove_function(self, name) -> None:
         del self._function_map[name]
 
 
@@ -185,7 +179,7 @@ class ExposedObjectCollection(ExposedObject):
 
     .. sourcecode:: Python
 
-        name:api
+        name: api
 
     A list of exposed objects can be obtained by calling the following method from the client:
 
@@ -196,7 +190,7 @@ class ExposedObjectCollection(ExposedObject):
     :param named_objects: Dictionary of of name: object pairs.
     """
 
-    def __init__(self, named_objects):
+    def __init__(self, named_objects) -> None:
         super(ExposedObjectCollection, self).__init__(self, ("get_objects",))
         self._object_map = {}
 
@@ -206,7 +200,7 @@ class ExposedObjectCollection(ExposedObject):
 
         self._add_function("get_objects", self.get_objects)
 
-    def add_object(self, obj, name):
+    def add_object(self, obj, name) -> None:
         """
         Adds the supplied object to the collection under the supplied name. If the name is already
         in use, a RuntimeError is raised. If the object is not an instance of
@@ -226,7 +220,7 @@ class ExposedObjectCollection(ExposedObject):
             glue = "." if not method_name.startswith(":") else ""
             self._add_function(name + glue + method_name, exposed_object[method_name])
 
-    def remove_object(self, name):
+    def remove_object(self, name) -> None:
         """
         Remove the object exposed under that name. If no object is registered under the supplied
         name, a RuntimeError is raised.
@@ -269,7 +263,7 @@ class ControlServer:
     :param connection_string: String with host:port pair for binding control server.
     """
 
-    def __init__(self, object_map, connection_string):
+    def __init__(self, object_map, connection_string) -> None:
         super(ControlServer, self).__init__()
 
         try:
@@ -277,17 +271,13 @@ class ControlServer:
         except ValueError:
             raise LewisException(
                 "'{}' is not a valid control server initialization string. "
-                'A string of the form "host:port" is expected.'.format(
-                    connection_string
-                )
+                'A string of the form "host:port" is expected.'.format(connection_string)
             )
 
         try:
             self.host = socket.gethostbyname(host)
         except socket.gaierror:
-            raise LewisException(
-                "Could not resolve control server host: {}".format(host)
-            )
+            raise LewisException("Could not resolve control server host: {}".format(host))
 
         self.port = port
 
@@ -312,7 +302,7 @@ class ControlServer:
         """
         return self._exposed_object
 
-    def start_server(self):
+    def start_server(self) -> None:
         """
         Binds the server to the configured host and port and starts listening.
         """
@@ -339,7 +329,7 @@ class ControlServer:
             },
         }
 
-    def process(self, blocking=False):
+    def process(self, blocking=False) -> None:
         """
         Each time this method is called, the socket tries to retrieve data and passes
         it to the JSONRPCResponseManager, which in turn passes the RPC to the
@@ -357,14 +347,10 @@ class ControlServer:
                          is triggered. Default is False to preserve behavior of prior versions.
         """
         if self._socket is None:
-            raise RuntimeError(
-                "The server has not been started yet, use start_server to do so."
-            )
+            raise RuntimeError("The server has not been started yet, use start_server to do so.")
 
         try:
-            request = self._socket.recv_unicode(
-                flags=zmq.NOBLOCK if not blocking else 0
-            )
+            request = self._socket.recv_unicode(flags=zmq.NOBLOCK if not blocking else 0)
 
             self.log.debug("Got request %s", request)
 

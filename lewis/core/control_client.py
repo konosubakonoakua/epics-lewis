@@ -49,11 +49,9 @@ class RemoteException(Exception):
     :param message: Exception message on the server side.
     """
 
-    def __init__(self, exception_type, message):
+    def __init__(self, exception_type, message) -> None:
         super(RemoteException, self).__init__(
-            "Exception on server side of type '{}': '{}'".format(
-                exception_type, message
-            )
+            "Exception on server side of type '{}': '{}'".format(exception_type, message)
         )
 
         self.server_side_type = exception_type
@@ -83,7 +81,7 @@ class ControlClient:
     :param timeout: Timeout in milliseconds for ZMQ operations.
     """
 
-    def __init__(self, host="127.0.0.1", port="10000", timeout=3000):
+    def __init__(self, host="127.0.0.1", port="10000", timeout=3000) -> None:
         self.timeout = timeout if timeout is not None else -1
 
         self._socket = self._get_zmq_req_socket()
@@ -168,7 +166,7 @@ class ObjectProxy:
 
     .. sourcecode:: Python
 
-        proxy = type('SomeClassName', (ObjectProxy, ), {})(connection, methods, prefix)
+        proxy = type("SomeClassName", (ObjectProxy,), {})(connection, methods, prefix)
 
     There is however, the class ControlClient, which automates all that
     and provides objects that are ready to use.
@@ -185,7 +183,7 @@ class ObjectProxy:
     :param prefix: Usually object name on the server plus dot.
     """
 
-    def __init__(self, connection, members, prefix=""):
+    def __init__(self, connection, members, prefix="") -> None:
         self._properties = set()
 
         self._connection = connection
@@ -231,7 +229,7 @@ class ObjectProxy:
             else:
                 raise ProtocolException(response["error"]["message"])
 
-    def _add_member_proxies(self, members):
+    def _add_member_proxies(self, members) -> None:
         for member in [str(m) for m in members]:
             if ":set" in member or ":get" in member:
                 self._properties.add(member.split(":")[-2].split(".")[-1])
@@ -242,9 +240,7 @@ class ObjectProxy:
             setattr(
                 type(self),
                 prop,
-                property(
-                    self._create_getter_proxy(prop), self._create_setter_proxy(prop)
-                ),
+                property(self._create_getter_proxy(prop), self._create_setter_proxy(prop)),
             )
 
     def _create_getter_proxy(self, property_name):

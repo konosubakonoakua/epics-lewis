@@ -23,7 +23,7 @@ or from :class:`StateMachineDevice` for devices that are more complex and can be
 using a state machine.
 """
 
-import logging
+from logging import Logger
 from typing import Callable
 
 from lewis.core.devices import DeviceBase
@@ -104,7 +104,7 @@ class StateMachineDevice(DeviceBase, CanProcessComposite):
     ) -> None:
         super(StateMachineDevice, self).__init__()
 
-        self.log: logging.Logger
+        self.log: Logger
         self.log.info("Creating device, setting up state machine")
 
         self._initialize_data()

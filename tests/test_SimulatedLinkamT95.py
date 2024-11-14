@@ -53,12 +53,8 @@ class TestSimulatedLinkamT95(unittest.TestCase):
         self.assertEqual(len(status_bytes), 10, "Byte array should always be 10 bytes")
         self.assertFalse(b"\x00" in status_bytes, "Byte array may not contain zeroes")
         self.assertEqual(0x01, status_bytes[0], "Status byte should be 1 on startup")
-        self.assertEqual(
-            0x80, status_bytes[1], "No error flags should be set on startup"
-        )
-        self.assertEqual(
-            0x80, status_bytes[2], "The pump should not be active on startup"
-        )
+        self.assertEqual(0x80, status_bytes[1], "No error flags should be set on startup")
+        self.assertEqual(0x80, status_bytes[2], "The pump should not be active on startup")
         self.assertEqual(b"00f0", status_bytes[6:10], "Starting temperature 24C")
 
     def test_simple_heat(self):

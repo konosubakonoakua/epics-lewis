@@ -18,8 +18,7 @@
 # *********************************************************************
 
 import unittest
-
-from mock import call, patch
+from unittest.mock import call, patch
 
 from lewis.core.processor import CanProcess, CanProcessComposite
 
@@ -28,77 +27,73 @@ class TestCanProcess(unittest.TestCase):
     def test_process_calls_doProcess(self):
         processor = CanProcess()
 
-        with patch.object(processor, "doProcess", create=True) as doProcessMock:
+        with patch.object(processor, "doProcess", create=True) as do_process_mock:
             processor.process(1.0)
 
-        doProcessMock.assert_called_once_with(1.0)
+        do_process_mock.assert_called_once_with(1.0)
 
     def test_process_calls_doBeforeProcess_only_if_doProcess_is_present(self):
         processor = CanProcess()
 
-        with patch.object(
-            processor, "doBeforeProcess", create=True
-        ) as doBeforeProcessMock:
+        with patch.object(processor, "doBeforeProcess", create=True) as do_before_process_mock:
             processor.process(1.0)
 
-            doBeforeProcessMock.assert_not_called()
+            do_before_process_mock.assert_not_called()
 
             with patch.object(processor, "doProcess", create=True):
                 processor.process(2.0)
 
-            doBeforeProcessMock.assert_called_once_with(2.0)
+            do_before_process_mock.assert_called_once_with(2.0)
 
     def test_process_calls_doAfterProcess_only_if_doProcess_is_present(self):
         processor = CanProcess()
 
-        with patch.object(processor, "doAfterProcess", create=True) as doAfterProcess:
+        with patch.object(processor, "doAfterProcess", create=True) as do_after_process:
             processor.process(1.0)
 
-            doAfterProcess.assert_not_called()
+            do_after_process.assert_not_called()
 
             with patch.object(processor, "doProcess", create=True):
                 processor.process(2.0)
 
-            doAfterProcess.assert_called_once_with(2.0)
+            do_after_process.assert_called_once_with(2.0)
 
     @patch.object(CanProcess, "process")
-    def test_call_invokes_process(self, processMock):
+    def test_call_invokes_process(self, process_mock):
         processor = CanProcess()
 
         processor(45.0)
 
-        processMock.assert_called_once_with(45.0)
+        process_mock.assert_called_once_with(45.0)
 
 
 class TestCanProcessComposite(unittest.TestCase):
     def test_process_calls_doBeforeProcess_if_present(self):
         composite = CanProcessComposite()
 
-        with patch.object(
-            composite, "doBeforeProcess", create=True
-        ) as doBeforeProcessMock:
+        with patch.object(composite, "doBeforeProcess", create=True) as do_before_process_mock:
             composite.process(3.0)
 
-        doBeforeProcessMock.assert_called_once_with(3.0)
+        do_before_process_mock.assert_called_once_with(3.0)
 
     def test_addProcessor_if_argument_CanProcess(self):
         composite = CanProcessComposite()
 
-        with patch.object(composite, "_append_processor") as appendProcessorMock:
+        with patch.object(composite, "_append_processor") as append_processor_mock:
             composite.add_processor(CanProcess())
 
-        self.assertEqual(appendProcessorMock.call_count, 1)
+        self.assertEqual(append_processor_mock.call_count, 1)
 
     def test_addProcessor_if_argument_not_CanProcess(self):
         composite = CanProcessComposite()
 
-        with patch.object(composite, "_append_processor") as appendProcessorMock:
+        with patch.object(composite, "_append_processor") as append_processor_mock:
             composite.add_processor(None)
 
-        appendProcessorMock.assert_not_called()
+        append_processor_mock.assert_not_called()
 
     def test_init_from_iterable(self):
-        with patch.object(CanProcess, "doProcess", create=True) as mockProcessMethod:
+        with patch.object(CanProcess, "doProcess", create=True) as mock_process_method:
             devices = (
                 CanProcess(),
                 CanProcess(),
@@ -107,4 +102,4 @@ class TestCanProcessComposite(unittest.TestCase):
             composite = CanProcessComposite(devices)
             composite(4.0)
 
-            mockProcessMethod.assert_has_calls([call(4.0), call(4.0)])
+            mock_process_method.assert_has_calls([call(4.0), call(4.0)])

@@ -26,7 +26,7 @@ class DefaultNotCirculatingState(State):
 
 
 class DefaultCirculatingState(State):
-    def in_state(self, dt):
+    def in_state(self, dt) -> None:
         # Approach target temperature at a set rate
         self._context.temperature = approaches.linear(
             self._context.temperature,

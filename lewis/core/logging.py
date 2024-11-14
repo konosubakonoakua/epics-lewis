@@ -33,7 +33,7 @@ of the standard `logging`_ library.
 """
 
 import logging
-from typing import Callable, overload, ParamSpec, TypeVar, Type, Protocol
+from typing import Callable, ParamSpec, Protocol, Type, TypeVar, overload
 
 
 class HasLog(Protocol):
