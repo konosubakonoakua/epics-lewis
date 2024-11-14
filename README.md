@@ -76,4 +76,4 @@ environmental aspects and services.
 -  Control server can be accessed via command-line utility, Python bindings, or
    JSON RPC.
 
-[Getting started](docs/quickstart.md)
+[Getting started](https://isiscomputinggroup.github.io/lewis/quickstart.html)
