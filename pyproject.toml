@@ -1,7 +1,7 @@
 [project]
 name="lewis"
 description="Lewis - Let's write intricate simulators!"
-requires-python="<3.12"
+requires-python=">=3.10"
 readme="README.md"
 classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -32,7 +32,8 @@ dependencies=[
     "json-rpc",
     "semantic_version",
     "PyYAML",
-    "scanf"
+    "scanf",
+    "pyasynchat;python_version >= '3.12'",
 ]
 
 [project.optional-dependencies]
