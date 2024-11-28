@@ -29,6 +29,13 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 suppress_warnings =["docutils"]
 html_theme = "sphinx_rtd_theme"
 html_logo = "resources/logo/lewis-logo.png"
+html_context = {
+    "display_github": True,  # Integrate GitHub
+    "github_user": "ISISComputingGroup",  # Username
+    "github_repo": "lewis",  # Repo name
+    "github_version": "main",  # Version
+    "conf_py_path": "/doc/",  # Path in the checkout to the docs root
+}
 
 autoclass_content = "both"
 myst_heading_anchors = 3
